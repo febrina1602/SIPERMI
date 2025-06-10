@@ -269,16 +269,16 @@
         >
           <div class="relative aspect-[3/4] bg-gray-200">
             <img
-              src="../../assets/buku/HauntingShadow.png"
+              src="../../assets/buku/TheHauntingOfHillHouse.png"
               alt="Haunting Shadow"
               class="w-full h-full object-cover object-top"
             />
           </div>
           <div class="p-4">
             <h3 class="font-bold text-gray-800 line-clamp-1">
-              Haunting Shadow: A Tale
+              The haunting of hill house
             </h3>
-            <p class="text-sm text-gray-600 mb-2">Reza Mahendra</p>
+            <p class="text-sm text-gray-600 mb-2">Nadya Andwiani ; Dyah Agustine</p>
             <div class="flex justify-between items-center">
               <span
                 class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
