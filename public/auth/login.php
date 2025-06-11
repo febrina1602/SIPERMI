@@ -2,7 +2,7 @@
 include '../../includes/connection_db.php';
 session_start();
 if (isset($_SESSION['user'])) {
-    header("Location:../dashboard.php");
+    header("Location:../../views/dashboard.php");
     exit;
 }
 
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($pass, $user['password'])) {
             unset($user['password']); 
             $_SESSION['user'] = $user;
-            header("Location:../dashboard.php");
+            header("Location:../../views/dashboard.php");
             exit;
         } else {
             $_SESSION['error'] = "Password salah.";

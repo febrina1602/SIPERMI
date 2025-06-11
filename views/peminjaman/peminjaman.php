@@ -9,7 +9,7 @@
 <body class="bg-gray-100 text-gray-800">
 
   <!-- Panggil HEADER -->
-  <?php include 'header.php'; ?>
+  <?php include '../../includes/header.php'; ?>
 
   <!-- MAIN CONTENT -->
   <main class="container mx-auto px-4 py-8">
@@ -80,7 +80,7 @@
   </main>
 
   <!-- Panggil FOOTER -->
-  <?php include 'footer.php'; ?>
+  <?php include '../../includes/footer.php'; ?>
 
 </body>
 </html>
