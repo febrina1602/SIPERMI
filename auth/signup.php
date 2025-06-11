@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
     $nomor = mysqli_real_escape_string($conn, trim($_POST['nomor']));
 
-    // Validasi data tidak kosong (opsional tambahan)
+    // Validasi data tidak kosong 
     if (empty($nama) || empty($email) || empty($_POST['password']) || empty($nomor)) {
         $_SESSION['error'] = "Semua field wajib diisi.";
         header("Location: signup.php");
