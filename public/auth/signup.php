@@ -1,5 +1,5 @@
 <?php
-include '../includes/connection_db.php';
+include '../../includes/connection_db.php';
 session_start();
 
 if (isset($_SESSION['user'])) {
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <div class="md:w-1/2 flex items-center justify-center bg-[#045481] p-6">
-      <img src="../assets/signup.jpg" alt="Sign up image"
+      <img src="../../assets/signup.jpg" alt="Sign up image"
            class="rounded-xl shadow-lg w-full h-full object-cover max-h-[500px]" />
     </div> 
 

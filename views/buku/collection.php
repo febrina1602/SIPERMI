@@ -3,7 +3,7 @@
 session_start();
 
 // Sertakan file koneksi database
-include '../includes/connection_db.php'; 
+include '../../includes/connection_db.php'; 
 
 // 1. PENGECEKAN ROLE ADMIN
 // Variabel ini akan bernilai true jika user adalah admin, dan false jika tidak.

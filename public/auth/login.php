@@ -1,5 +1,5 @@
 <?php
-include '../includes/connection_db.php';
+include '../../includes/connection_db.php';
 session_start();
 if (isset($_SESSION['user'])) {
     header("Location:../dashboard.php");
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div class="hidden md:block md:w-1/2 bg-[#0978B6] p-6 flex items-center justify-center">
-        <img src="../assets/login.jpg" alt="Library Image"
+        <img src="../../assets/login.jpg" alt="Library Image"
           class="rounded-xl shadow-lg w-full h-full object-cover max-h-[500px]" />
       </div>
 
