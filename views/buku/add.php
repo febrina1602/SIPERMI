@@ -1,17 +1,13 @@
 <?php
 session_start();
-// Path ../../ karena file ini ada di dalam folder admin
 include '../../includes/connection_db.php'; 
 
-// 1. KEAMANAN: Pastikan hanya admin yang bisa mengakses halaman ini
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    // Jika bukan admin, tendang ke halaman koleksi
     $_SESSION['error'] = "Anda tidak memiliki hak akses untuk halaman ini.";
     header("Location: collection.php");
     exit;
 }
 
-// 2. AMBIL DATA KATEGORI: Untuk mengisi dropdown di form
 $kategori_list = [];
 $query_kategori = "SELECT id, nama_kategori FROM kategori_buku ORDER BY nama_kategori ASC";
 $result_kategori = mysqli_query($conn, $query_kategori);
@@ -21,9 +17,7 @@ if ($result_kategori) {
     }
 }
 
-// 3. PROSES FORM JIKA DISUBMIT
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil semua data dari form
     $judul = $_POST['judul'];
     $penulis = $_POST['penulis'];
     $penerbit = $_POST['penerbit'];
@@ -32,54 +26,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_kategori = $_POST['id_kategori'];
     $deskripsi = $_POST['deskripsi'];
     $stok = $_POST['stok'];
-    $image_path = null; // Default value jika tidak ada gambar diupload
+    $image_path = null; 
 
-    // 4. PROSES UPLOAD GAMBAR
-    $image_path = ''; // Default value
-    // Cek jika ada file yang diupload dan tidak ada error
+    $image_path = ''; 
     if (isset($_FILES['cover_buku']) && $_FILES['cover_buku']['error'] === UPLOAD_ERR_OK) {
         $image = $_FILES['cover_buku'];
+        $uploadDir = '../../assets/images/buku/';
         
-        // 1. Tentukan folder tujuan sesuai permintaan Anda
-        // Path ../ karena kita berada di dalam folder admin
-        $uploadDir = '../assets/images/buku/';
-        
-        // 2. Buat nama file unik sesuai permintaan Anda (ISBN_timestamp.ext)
         $fileName = $isbn . '_' . time() . '.' . pathinfo($image['name'], PATHINFO_EXTENSION);
         $targetFile = $uploadDir . $fileName;
 
-        // Pastikan folder tujuan ada, jika tidak, buat folder tersebut
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
-        // Pindahkan file ke folder tujuan
         if (move_uploaded_file($image['tmp_name'], $targetFile)) {
-            // 3. Simpan path absolut sesuai permintaan Anda
             $image_path = '/sipermi/assets/images/buku/' . $fileName;
         } else {
              $_SESSION['error'] = "Gagal memindahkan file yang diupload.";
-             // Biarkan $image_path kosong jika gagal
         }
     }
-    // ======================================================================
-    // == AKHIR BLOK UPLOAD GAMBAR
-    // ======================================================================
-
-
-    // INSERT DATA KE DATABASE (MENGGUNAKAN PREPARED STATEMENT YANG AMAN)
     $query_insert = "INSERT INTO buku (judul, penulis, penerbit, tahun_terbit, isbn, id_kategori, deskripsi, stok, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = mysqli_prepare($conn, $query_insert);
     
-    // Sesuaikan tipe data: s=string, i=integer, d=double, b=blob
     mysqli_stmt_bind_param($stmt, "sssssisss", 
         $judul, 
         $penulis, 
         $penerbit, 
         $tahun_terbit, 
         $isbn, 
-        $id_kategori, // Menggunakan id_kategori, bukan nama kategori
+        $id_kategori, 
         $deskripsi, 
         $stok, 
         $image_path
@@ -90,14 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: collection.php");
         exit;
     } else {
-        // Cek jika error disebabkan oleh duplikasi ISBN
         if (mysqli_errno($conn) == 1062) {
             $_SESSION['error'] = "Gagal menambahkan buku. ISBN '" . htmlspecialchars($isbn) . "' sudah terdaftar.";
         } else {
             $_SESSION['error'] = "Error: " . mysqli_stmt_error($stmt);
         }
-        // Redirect kembali ke form tambah buku jika ada error
-        header("Location: tambah_buku.php");
+        header("Location: add.php");
         exit;
     }
 }
@@ -198,7 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
 <script>
-    // Fungsi untuk menampilkan preview gambar sebelum diupload
     function previewImage(event) {
         const input = event.target;
         const preview = document.getElementById('preview');

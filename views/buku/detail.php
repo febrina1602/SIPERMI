@@ -1,5 +1,5 @@
 <?php
-include '../includes/connection_db.php';
+include '../../includes/connection_db.php';
 
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $error_message = "Buku tidak ditemukan. ID tidak valid atau tidak disertakan.";
@@ -86,9 +86,13 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
                 
                 <div class="mt-6 border-t pt-6">
                     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                        <div class="sm:col-span-2">
+                        <div>
                             <dt class="text-sm font-medium text-gray-500">Penerbit</dt>
-                            <dd class="mt-1 text-sm text-gray-900"><?= htmlspecialchars($book['penerbit']) ?>, <?= htmlspecialchars($book['tahun_terbit']) ?></dd>
+                            <dd class="mt-1 text-sm text-gray-900"><?= htmlspecialchars($book['penerbit']) ?></dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Tahun Terbit</dt>
+                            <dd class="mt-1 text-sm text-gray-900"><?= htmlspecialchars($book['tahun_terbit']) ?></dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">ISBN</dt>

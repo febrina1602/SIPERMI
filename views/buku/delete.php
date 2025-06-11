@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Path ../../ karena file ini ada di dalam folder admin
-include '../includes/connection_db.php'; 
+include '../../includes/connection_db.php'; 
 
 // =================================================================
 // 1. KEAMANAN: Pastikan hanya admin yang bisa mengakses

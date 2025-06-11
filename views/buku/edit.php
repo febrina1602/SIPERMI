@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../includes/connection_db.php';
+// Sesuaikan path include jika struktur folder Anda berbeda
+include '../../includes/connection_db.php'; 
 
 // 1. KEAMANAN: Pastikan hanya admin yang bisa mengakses
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -15,7 +16,7 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     header("Location: collection.php");
     exit;
 }
-$book_id = $_GET['id'];
+$book_id = (int)$_GET['id'];
 
 // 3. AMBIL DATA BUKU SAAT INI (DILAKUKAN DI AWAL)
 // Ini membuat data $book tersedia untuk blok POST dan untuk mengisi form di bawah
@@ -34,68 +35,80 @@ if (!$book) {
 
 // 4. PROSES UPDATE DATA (JIKA FORM DISUBMIT)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil semua data dari form
-    $id_to_update = $_POST['id'];
-    $judul = $_POST['judul'];
-    $penulis = $_POST['penulis'];
-    $penerbit = $_POST['penerbit'];
-    $tahun_terbit = $_POST['tahun_terbit'];
-    $isbn = $_POST['isbn'];
-    $id_kategori = $_POST['id_kategori'];
-    $deskripsi = $_POST['deskripsi'];
-    $stok = $_POST['stok'];
-    
-    // ======================================================================
-    // == BLOK UPDATE GAMBAR DISESUAIKAN DENGAN LOGIKA ANDA
-    // ======================================================================
+    // Ambil dan bersihkan semua data dari form
+    $id_to_update = (int)$_POST['id'];
+    $judul = trim($_POST['judul']);
+    $penulis = trim($_POST['penulis']);
+    $penerbit = trim($_POST['penerbit']);
+    $tahun_terbit = trim($_POST['tahun_terbit']);
+    $isbn = trim($_POST['isbn']);
+    $id_kategori = (int)$_POST['id_kategori'];
+    $deskripsi = trim($_POST['deskripsi']);
+    $stok = (int)$_POST['stok'];
     $image_path = $book['image_path']; // Defaultnya adalah path gambar yang lama
 
-    // Cek jika ada file BARU yang diupload
+    // 5. VALIDASI DI SISI SERVER (Menggunakan validasi bagus dari kode Anda)
+    if (!preg_match('/^\d{4}$/', $tahun_terbit) || $tahun_terbit > date("Y") || $tahun_terbit < 1000) {
+        $_SESSION['error_flash'] = "Tahun terbit tidak valid (harus 4 digit dan tidak melebihi tahun sekarang).";
+        header("Location: edit.php?id=$id_to_update");
+        exit;
+    }
+    // ISBN bisa memiliki X di akhir, jadi regex disesuaikan
+    if (!preg_match('/^[\d-]{10,17}X?$/', $isbn)) {
+        $_SESSION['error_flash'] = "Format ISBN tidak valid.";
+        header("Location: edit.php?id=$id_to_update");
+        exit;
+    }
+
+    // 6. LOGIKA UPDATE GAMBAR
     if (isset($_FILES['cover_buku']) && $_FILES['cover_buku']['error'] === UPLOAD_ERR_OK) {
+        $image = $_FILES['cover_buku'];
         
-        // A. Hapus gambar lama (jika ada) dari server
+        // Validasi tipe file (MIME type)
+        $allowed_types = ['image/jpeg', 'image/png'];
+        $mime_type = mime_content_type($image['tmp_name']);
+        if (!in_array($mime_type, $allowed_types)) {
+            $_SESSION['error_flash'] = "File harus berupa gambar JPG atau PNG.";
+            header("Location: edit.php?id=$id_to_update");
+            exit;
+        }
+
+        // Hapus gambar lama jika ada
         if (!empty($book['image_path'])) {
-            // Gunakan metode parse_url dan DOCUMENT_ROOT sesuai contoh Anda
-            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($book['image_path'], PHP_URL_PATH);
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath);
+            $old_filename = basename($book['image_path']);
+            $old_physical_path = '../../assets/images/buku/' . $old_filename;
+            if (file_exists($old_physical_path)) {
+                unlink($old_physical_path);
             }
         }
-        
-        // B. Proses upload gambar baru
-        $image = $_FILES['cover_buku'];
-        $uploadDir = '../assets/images/buku/'; // Path fisik relatif dari file skrip ini
+
+        // Proses upload gambar baru
+        $uploadDir = '../../assets/images/buku/';
         $fileName = $isbn . '_' . time() . '.' . pathinfo($image['name'], PATHINFO_EXTENSION);
         $targetFile = $uploadDir . $fileName;
 
         if (move_uploaded_file($image['tmp_name'], $targetFile)) {
-            // Jika berhasil, perbarui variabel $image_path dengan path URL absolut yang baru
-            // PENTING: Sesuaikan '/sipermi/' dengan nama folder proyek Anda jika berbeda
-            $image_path = '/sipermi/assets/images/buku/' . $fileName;
+            $image_path = '/sipermi/assets/images/buku/' . $fileName; // Perbarui path gambar
         } else {
-            $_SESSION['error'] = "Gagal memindahkan file baru.";
-            header("Location: edit.php?id=" . $id_to_update);
+            $_SESSION['error_flash'] = "Gagal mengunggah file baru.";
+            header("Location: edit.php?id=$id_to_update");
             exit;
         }
     }
-    // Jika tidak ada file baru yang diupload, variabel $image_path tidak akan diubah dan tetap berisi path lama.
-    // ======================================================================
-    // == AKHIR BLOK UPDATE GAMBAR
-    // ======================================================================
 
-    // 5. UPDATE DATA KE DATABASE (MENGGUNAKAN PREPARED STATEMENT YANG AMAN)
+    // 7. UPDATE DATA KE DATABASE DENGAN PREPARED STATEMENT
     $query_update = "UPDATE buku SET judul = ?, penulis = ?, penerbit = ?, tahun_terbit = ?, isbn = ?, id_kategori = ?, deskripsi = ?, stok = ?, image_path = ? WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $query_update);
-    mysqli_stmt_bind_param($stmt, "sssssisssi", 
+    $stmt_update = mysqli_prepare($conn, $query_update);
+    mysqli_stmt_bind_param($stmt_update, "sssssisssi", 
         $judul, $penulis, $penerbit, $tahun_terbit, $isbn, $id_kategori, $deskripsi, $stok, $image_path, $id_to_update
     );
 
-    if (mysqli_stmt_execute($stmt)) {
+    if (mysqli_stmt_execute($stmt_update)) {
         $_SESSION['success'] = "Data buku '" . htmlspecialchars($judul) . "' berhasil diperbarui.";
         header("Location: collection.php");
         exit;
     } else {
-        $_SESSION['error'] = "Gagal memperbarui data buku: " . mysqli_stmt_error($stmt);
+        $_SESSION['error'] = "Gagal memperbarui data buku: " . mysqli_stmt_error($stmt_update);
         header("Location: edit.php?id=" . $id_to_update);
         exit;
     }
@@ -109,7 +122,6 @@ if ($result_kategori) {
         $kategori_list[] = $row;
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -126,10 +138,16 @@ if ($result_kategori) {
             
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-slate-800">Ubah Data Buku</h1>
-                <a href="collection.php" class="text-sm font-semibold text-slate-600 hover:text-slate-900">&larr; Kembali ke Koleksi</a>
+                <a href="../collection.php" class="text-sm font-semibold text-slate-600 hover:text-slate-900">&larr; Kembali ke Koleksi</a>
             </div>
             
-            <form method="POST" action="edit.php" enctype="multipart/form-data" class="space-y-6">
+            <?php if (isset($_SESSION['error_flash'])): ?>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4" role="alert">
+                    <?= $_SESSION['error_flash']; unset($_SESSION['error_flash']); ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" action="edit.php?id=<?= $book_id ?>" enctype="multipart/form-data" class="space-y-6">
                 <input type="hidden" name="id" value="<?= htmlspecialchars($book['id']) ?>">
                 
                 <div>
@@ -194,7 +212,11 @@ if ($result_kategori) {
                     </div>
                     <label for="cover_buku" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition">
                          <input id="cover_buku" name="cover_buku" type="file" accept="image/*" class="hidden" onchange="previewImage(event)">
-                         </label>
+                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                            <p class="text-sm text-slate-500">Klik untuk ganti gambar</p>
+                        </div>
+                    </label>
                 </div>
                 
                 <div class="pt-4 border-t">
@@ -203,11 +225,25 @@ if ($result_kategori) {
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 
 <script>
-    // Script previewImage tetap sama
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('imagePreview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>
 </body>
 </html>
