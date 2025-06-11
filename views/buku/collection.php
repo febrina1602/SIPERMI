@@ -4,6 +4,7 @@ session_start();
 
 // Sertakan file koneksi database
 include '../../includes/connection_db.php'; 
+include '../../includes/header.php';
 
 // 1. PENGECEKAN ROLE ADMIN
 // Variabel ini akan bernilai true jika user adalah admin, dan false jika tidak.
@@ -160,6 +161,6 @@ if ($result_buku) {
         
         <?php endif; ?>
         </div>
-
+<?php include '../../includes/footer.php'; ?>
 </body>
 </html>

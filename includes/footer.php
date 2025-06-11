@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
 </head>
 <body>
   <footer class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] text-white py-6 px-6">
@@ -34,17 +35,32 @@
 
       <div>
         <h3 class="font-semibold mb-3 text-base border-b border-white/40 pb-1">Ikuti Kami :</h3>
-        <div class="flex space-x-4 text-white text-2xl">
-          <a href="https://instagram.com/akunmu" target="_blank" class="hover:text-gray-300 transition-colors duration-300">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="https://x.com/akunmu" target="_blank" class="hover:text-gray-300 transition-colors duration-300">
-            <i class="fab fa-x-twitter"></i>
-          </a>
-          <a href="https://linkedin.com/in/akunmu" target="_blank" class="hover:text-gray-300 transition-colors duration-300">
-            <i class="fab fa-linkedin"></i>
-          </a>
-        </div>
+        <div class="flex space-x-4 mb-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
+              >
+                <i class="ri-instagram-line"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
+              >
+                <i class="ri-facebook-fill"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
+              >
+                <i class="ri-twitter-x-line"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
+              >
+                <i class="ri-youtube-line"></i>
+              </a>
+            </div>
       </div>
     </div>
 
