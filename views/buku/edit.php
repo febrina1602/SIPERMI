@@ -1,16 +1,13 @@
 <?php
 session_start();
-// Sesuaikan path include jika struktur folder Anda berbeda
 include '../../includes/connection_db.php'; 
 
-// 1. KEAMANAN: Pastikan hanya admin yang bisa mengakses
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     $_SESSION['error'] = "Anda tidak memiliki hak akses untuk halaman ini.";
     header("Location: collection.php");
     exit;
 }
 
-// 2. VALIDASI ID BUKU DARI URL
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $_SESSION['error'] = "Permintaan tidak valid. ID buku tidak ditemukan.";
     header("Location: collection.php");
@@ -18,24 +15,19 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 }
 $book_id = (int)$_GET['id'];
 
-// 3. AMBIL DATA BUKU SAAT INI (DILAKUKAN DI AWAL)
-// Ini membuat data $book tersedia untuk blok POST dan untuk mengisi form di bawah
 $stmt_get = mysqli_prepare($conn, "SELECT * FROM buku WHERE id = ?");
 mysqli_stmt_bind_param($stmt_get, "i", $book_id);
 mysqli_stmt_execute($stmt_get);
 $result = mysqli_stmt_get_result($stmt_get);
 $book = mysqli_fetch_assoc($result);
 
-// Jika buku dengan ID tersebut tidak ditemukan, hentikan skrip
 if (!$book) {
     $_SESSION['error'] = "Buku dengan ID " . htmlspecialchars($book_id) . " tidak ditemukan.";
     header("Location: collection.php");
     exit;
 }
 
-// 4. PROSES UPDATE DATA (JIKA FORM DISUBMIT)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil dan bersihkan semua data dari form
     $id_to_update = (int)$_POST['id'];
     $judul = trim($_POST['judul']);
     $penulis = trim($_POST['penulis']);
@@ -45,26 +37,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_kategori = (int)$_POST['id_kategori'];
     $deskripsi = trim($_POST['deskripsi']);
     $stok = (int)$_POST['stok'];
-    $image_path = $book['image_path']; // Defaultnya adalah path gambar yang lama
+    $image_path = $book['image_path']; 
 
-    // 5. VALIDASI DI SISI SERVER (Menggunakan validasi bagus dari kode Anda)
     if (!preg_match('/^\d{4}$/', $tahun_terbit) || $tahun_terbit > date("Y") || $tahun_terbit < 1000) {
         $_SESSION['error_flash'] = "Tahun terbit tidak valid (harus 4 digit dan tidak melebihi tahun sekarang).";
         header("Location: edit.php?id=$id_to_update");
         exit;
     }
-    // ISBN bisa memiliki X di akhir, jadi regex disesuaikan
     if (!preg_match('/^[\d-]{10,17}X?$/', $isbn)) {
         $_SESSION['error_flash'] = "Format ISBN tidak valid.";
         header("Location: edit.php?id=$id_to_update");
         exit;
     }
 
-    // 6. LOGIKA UPDATE GAMBAR
     if (isset($_FILES['cover_buku']) && $_FILES['cover_buku']['error'] === UPLOAD_ERR_OK) {
         $image = $_FILES['cover_buku'];
         
-        // Validasi tipe file (MIME type)
         $allowed_types = ['image/jpeg', 'image/png'];
         $mime_type = mime_content_type($image['tmp_name']);
         if (!in_array($mime_type, $allowed_types)) {
@@ -73,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Hapus gambar lama jika ada
         if (!empty($book['image_path'])) {
             $old_filename = basename($book['image_path']);
             $old_physical_path = '../../assets/images/buku/' . $old_filename;
@@ -82,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Proses upload gambar baru
         $uploadDir = '../../assets/images/buku/';
         $fileName = $isbn . '_' . time() . '.' . pathinfo($image['name'], PATHINFO_EXTENSION);
         $targetFile = $uploadDir . $fileName;
@@ -96,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 7. UPDATE DATA KE DATABASE DENGAN PREPARED STATEMENT
     $query_update = "UPDATE buku SET judul = ?, penulis = ?, penerbit = ?, tahun_terbit = ?, isbn = ?, id_kategori = ?, deskripsi = ?, stok = ?, image_path = ? WHERE id = ?";
     $stmt_update = mysqli_prepare($conn, $query_update);
     mysqli_stmt_bind_param($stmt_update, "sssssisssi", 
@@ -114,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Ambil daftar kategori untuk dropdown (masih diperlukan untuk form)
 $kategori_list = [];
 $result_kategori = mysqli_query($conn, "SELECT id, nama_kategori FROM kategori_buku ORDER BY nama_kategori ASC");
 if ($result_kategori) {
