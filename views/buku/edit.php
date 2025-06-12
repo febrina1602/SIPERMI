@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $targetFile = $uploadDir . $fileName;
 
         if (move_uploaded_file($image['tmp_name'], $targetFile)) {
-            $image_path = '/sipermi/assets/images/buku/' . $fileName; // Perbarui path gambar
+            $image_path = '/sipermi/assets/images/buku/' . $fileName; 
         } else {
             $_SESSION['error_flash'] = "Gagal mengunggah file baru.";
             header("Location: edit.php?id=$id_to_update");
@@ -112,7 +112,7 @@ if ($result_kategori) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubah Data Buku - Panel Admin</title>
+    <title>Ubah Data Buku</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100">

@@ -1,16 +1,11 @@
 <?php
-// Selalu mulai session di awal
 session_start();
 
-// Sertakan file koneksi database
 include '../../includes/connection_db.php'; 
 include '../../includes/header.php';
 
-// 1. PENGECEKAN ROLE ADMIN
-// Variabel ini akan bernilai true jika user adalah admin, dan false jika tidak.
 $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin';
 
-// Query untuk mengambil semua kategori dari database
 $query_kategori = "SELECT id, nama_kategori FROM kategori_buku ORDER BY nama_kategori ASC";
 $result_kategori = mysqli_query($conn, $query_kategori);
 $categories = [];

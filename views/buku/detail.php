@@ -118,7 +118,7 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
                     <div class="w-full sm:w-auto">
                         
                             <?php if ($book['stok'] > 0):  ?>
-                                <a href="peminjaman/add.php?id=<?= $book['id'] ?>" class="w-full text-center inline-block bg-[#0978B6] text-white font-bold text-base py-2 px-6 rounded-lg shadow-md hover:bg-opacity-90 transition-colors">
+                                <a href="../peminjaman/add.php?id=<?= $book['id'] ?>" class="w-full text-center inline-block bg-[#0978B6] text-white font-bold text-base py-2 px-6 rounded-lg shadow-md hover:bg-opacity-90 transition-colors">
                                     Pinjam Buku
                                 </a>
                             <?php else:  ?>
