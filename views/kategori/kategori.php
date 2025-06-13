@@ -17,13 +17,10 @@
     />
     <style>
       :where([class^="ri-"])::before { content: "\f3c2"; }
-      .book-card:hover {
+      .category-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
-      .category-pill:hover {
-      background-color: #0077BE;
-      color: white;
+      cursor: pointer;
       }
       .search-input:focus {
       border-color: #0077BE;
@@ -31,6 +28,9 @@
       }
       .footer-gradient {
       background: linear-gradient(135deg, #0077BE, #005a8e);
+      }
+      #bookDetailModal {
+        transition: all 0.3s ease;
       }
     </style>
     <script>
@@ -81,25 +81,14 @@
             >Peminjaman</a
           >
         </nav>
-        <div class="flex items-center space-x-4">
-          <a href="#" class="hidden md:block hover:underline">Masuk</a>
-          <a
-            href="#"
-            class="hidden md:block bg-white text-primary px-4 py-2 rounded-button font-medium whitespace-nowrap"
-            >Daftar</a
-          >
-          <button class="md:hidden w-10 h-10 flex items-center justify-center">
-            <i class="ri-menu-line ri-lg"></i>
-          </button>
-        </div>
       </div>
     </header>
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-6">
       <!-- Page Title -->
       <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Semua Buku</h1>
-        <p class="text-gray-600">Tingkatkan literasi membacamu hari ini!</p>
+        <h1 class="text-2xl font-bold text-gray-800">Semua Kategori</h1>
+        <p class="text-gray-600">Temukan buku berdasarkan kategori favoritmu!</p>
       </div>
       <!-- Search Bar -->
       <div class="flex flex-col md:flex-row gap-4 mb-6">
@@ -111,367 +100,162 @@
           </div>
           <input
             type="text"
-            placeholder="Cari Judul/Pengarang/ISBN..."
+            placeholder="Cari Kategori Buku"
             class="search-input w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none text-sm"
           />
         </div>
-        
       </div>
-      <!-- Categories -->
-      <div class="flex flex-wrap gap-2 mb-8">
-        <button
-          class="category-pill px-4 py-2 bg-primary text-white rounded-full text-sm font-medium whitespace-nowrap"
-        >
-          Semua
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Administrasi
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Agama
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Ekonomi
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Ensiklopedia
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Fiksi
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Humor
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Inspirasi
-        </button>
-        <button
-          class="category-pill px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap transition-colors"
-        >
-          Sejarah
-        </button>
-      </div>
-      <!-- Books Grid -->
+      <!-- Categories Grid -->
       <div
         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
       >
-        <!-- Book 1 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        <!-- Category 1 - Fiksi -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Fiksi')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/Lupaendonesa.png"
-              alt="Lupa endonesa"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Fiksi"
+              class="w-full h-full object-cover"
             />
-            
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">Lupa endonesa</h3>
-            <p class="text-sm text-gray-600 mb-2">Sujiwo Tejo (Pengarang) ; Endah Suci Astuti (Penyunting) ; Nurjannah Intan (Penyunting)</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Fiksi</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 2 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 2 - Non-Fiksi -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Non-Fiksi')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/MenaklukanUjungDuniawi.png"
-              alt="Menaklukan Ujung Duniawi"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Non-Fiksi"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              Menaklukan Ujung Duniawi
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Bayu Prasetyo</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full"
-                >Dipinjam</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Non-Fiksi</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 3 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 3 - Sains -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Sains')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/TheAdventureOfMiniUnicorn.png"
-              alt="The Adventure Of Mini Unicorn"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Sains"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              The Adventure Of Mini Unicorn
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Anindita Permata</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Sains</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 4 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 4 - Teknologi -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Teknologi')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/TheHauntingOfHillHouse.png"
-              alt="Haunting Shadow"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1535905557558-afc4877a26fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Teknologi"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              The haunting of hill house
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Nadya Andwiani ; Dyah Agustine</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Teknologi</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 5 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 5 - Sastra -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Sastra')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/TafsirTeologiPembebasanAgama.png"
-              alt="Tafsir Teologi Pembebasan Agama"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Sastra"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              Tafsir Teologi Pembebasan Agama
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Dr. Wahid S.Ag, M.A.</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Sastra</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 6 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 6 - Sejarah -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Sejarah')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/KetawangakakdiSenayan.png"
-              alt="Ketawa ngakak di Senayan : humor-humor anggota DPR"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Sejarah"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              Ketawa ngakak di Senayan : humor-humor anggota DPR
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Baharuddin Aritonang</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full"
-                >Segera Kembali</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Sejarah</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 7 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 7 - Bisnis -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Bisnis')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/Bersengkarut.png"
-              alt="Bersengkarut"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Bisnis"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">Bersengkarut</h3>
-            <p class="text-sm text-gray-600 mb-2">Ratih Kumala</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Bisnis</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 8 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 8 - Seni -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Seni')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/Kitabkencan.png"
-              alt="Kitab kencan : 50 tanda kenapa kencan pertama lo gak usah lanjut"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Seni"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">Kitab kencan : 50 tanda kenapa kencan pertama lo gak usah lanjut</h3>
-            <p class="text-sm text-gray-600 mb-2">Sekar Ayu Asmara (Pengarang)</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full"
-                >Dipinjam</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Seni</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 9 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 9 - Pendidikan -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Pendidikan')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/ManajemenBisnisModern.png"
-              alt="Manajemen Bisnis Modern"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1581726707445-75cbe4efc586?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Pendidikan"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              Manajemen Bisnis Modern
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Prof. Bambang Sutrisno</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Pendidikan</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
-        <!-- Book 10 -->
-        <div
-          class="book-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300"
-          data-category="administrasi"
-          data-isbn="9780123456789"
-        >
-          <div class="relative aspect-[3/4] bg-gray-200">
+        
+        <!-- Category 10 - Anak-anak -->
+        <div class="category-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300" onclick="showBookDetails('Anak-anak')">
+          <div class="relative aspect-square bg-gray-200">
             <img
-              src="../../assets/buku/KotaMasaDepan.png"
-              alt="Kota Masa Depan"
-              class="w-full h-full object-cover object-top"
+              src="https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+              alt="Anak-anak"
+              class="w-full h-full object-cover"
             />
           </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-800 line-clamp-1">
-              Kota Masa Depan
-            </h3>
-            <p class="text-sm text-gray-600 mb-2">Adinda Putri</p>
-            <div class="flex justify-between items-center">
-              <span
-                class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full"
-                >Tersedia</span
-              >
-              <button
-                class="w-8 h-8 flex items-center justify-center text-primary hover:bg-gray-100 rounded-full"
-              >
-                <i class="ri-bookmark-line"></i>
-              </button>
-            </div>
+          <div class="p-4 text-center">
+            <h3 class="font-bold text-gray-800">Anak-anak</h3>
+            <p class="text-sm text-gray-500 mt-1">Lihat semua buku</p>
           </div>
         </div>
       </div>
@@ -512,6 +296,125 @@
         </nav>
       </div>
     </main>
+
+    <!-- Book Detail Modal -->
+    <div id="bookDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <h2 id="modalCategoryTitle" class="text-2xl font-bold text-gray-800">Buku dalam Kategori: <span id="categoryName">Fiksi</span></h2>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+              <i class="ri-close-line text-2xl"></i>
+            </button>
+          </div>
+          
+          <!-- Book List in Category -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <!-- Book 1 -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div class="relative aspect-[3/4] bg-gray-200 mb-3">
+                <img
+                  src="../../assets/buku/Lupaendonesa.png"
+                  alt="Lupa endonesa"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+              <h3 class="font-bold text-gray-800 line-clamp-1">Lupa endonesa</h3>
+              <p class="text-sm text-gray-600 mb-2">Sujiwo Tejo</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Tersedia</span>
+                <button class="text-primary hover:text-secondary">
+                  <i class="ri-information-line text-lg"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Book 2 -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div class="relative aspect-[3/4] bg-gray-200 mb-3">
+                <img
+                  src="../../assets/buku/MenaklukanUjungDuniawi.png"
+                  alt="Menaklukan Ujung Duniawi"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+              <h3 class="font-bold text-gray-800 line-clamp-1">Menaklukan Ujung Duniawi</h3>
+              <p class="text-sm text-gray-600 mb-2">Bayu Prasetyo</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Dipinjam</span>
+                <button class="text-primary hover:text-secondary">
+                  <i class="ri-information-line text-lg"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Book 3 -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div class="relative aspect-[3/4] bg-gray-200 mb-3">
+                <img
+                  src="../../assets/buku/TheAdventureOfMiniUnicorn.png"
+                  alt="The Adventure Of Mini Unicorn"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+              <h3 class="font-bold text-gray-800 line-clamp-1">The Adventure Of Mini Unicorn</h3>
+              <p class="text-sm text-gray-600 mb-2">Anindita Permata</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Tersedia</span>
+                <button class="text-primary hover:text-secondary">
+                  <i class="ri-information-line text-lg"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Book 4 -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div class="relative aspect-[3/4] bg-gray-200 mb-3">
+                <img
+                  src="../../assets/buku/TheHauntingOfHillHouse.png"
+                  alt="Haunting Shadow"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+              <h3 class="font-bold text-gray-800 line-clamp-1">The haunting of hill house</h3>
+              <p class="text-sm text-gray-600 mb-2">Nadya Andwiani</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Tersedia</span>
+                <button class="text-primary hover:text-secondary">
+                  <i class="ri-information-line text-lg"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Book 5 -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div class="relative aspect-[3/4] bg-gray-200 mb-3">
+                <img
+                  src="../../assets/buku/TafsirTeologiPembebasanAgama.png"
+                  alt="Tafsir Teologi Pembebasan Agama"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+              <h3 class="font-bold text-gray-800 line-clamp-1">Tafsir Teologi Pembebasan Agama</h3>
+              <p class="text-sm text-gray-600 mb-2">Dr. Wahid S.Ag, M.A.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Tersedia</span>
+                <button class="text-primary hover:text-secondary">
+                  <i class="ri-information-line text-lg"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-6 flex justify-center">
+            <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
+              Lihat Semua Buku dalam Kategori Ini
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] text-white ">
       <div class="container mx-auto px-4 py-4">
@@ -598,7 +501,6 @@
                 <i class="ri-youtube-line"></i>
               </a>
             </div>
-            
           </div>
         </div>
         <div class="border-t border-blue-400 mt-8 pt-6 text-center text-sm">
@@ -606,99 +508,33 @@
         </div>
       </div>
     </footer>
-    <!-- Scripts -->
-    <script id="bookmarkScript">
-      document.addEventListener("DOMContentLoaded", function () {
-        const bookmarkButtons = document.querySelectorAll(".book-card button");
-        bookmarkButtons.forEach((button) => {
-          button.addEventListener("click", function () {
-            const icon = this.querySelector("i");
-            if (icon.classList.contains("ri-bookmark-line")) {
-              icon.classList.remove("ri-bookmark-line");
-              icon.classList.add("ri-bookmark-fill");
-              this.classList.add("text-yellow-500");
-            } else {
-              icon.classList.remove("ri-bookmark-fill");
-              icon.classList.add("ri-bookmark-line");
-              this.classList.remove("text-yellow-500");
-            }
-          });
-        });
+
+    <script>
+      // Function to show book details modal
+      function showBookDetails(categoryName) {
+        document.getElementById('categoryName').textContent = categoryName;
+        document.getElementById('bookDetailModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Function to close modal
+      function closeModal() {
+        document.getElementById('bookDetailModal').classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+      
+      // Close modal when clicking outside
+      document.getElementById('bookDetailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeModal();
+        }
       });
-    </script>
-    <script id="categoryFilterScript">
-      document.addEventListener("DOMContentLoaded", function () {
-        const categoryPills = document.querySelectorAll(".category-pill");
-        const bookCards = document.querySelectorAll(".book-card");
-        categoryPills.forEach((pill) => {
-          pill.addEventListener("click", function () {
-            const category = this.textContent.trim().toLowerCase();
-            categoryPills.forEach((p) => {
-              p.classList.remove("bg-primary", "text-white");
-              p.classList.add("bg-gray-100", "text-gray-700");
-            });
-            this.classList.remove("bg-gray-100", "text-gray-700");
-            this.classList.add("bg-primary", "text-white");
-            bookCards.forEach((card) => {
-              const bookCategory = card.getAttribute("data-category").toLowerCase();
-              if (category === "semua" || bookCategory === category) {
-                card.style.display = "";
-                card.classList.remove("hidden");
-              } else {
-                card.style.display = "none";
-                card.classList.add("hidden");
-              }
-            });
-          });
-        });
-      });
-    </script>
-    <script id="searchScript">
-      document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.querySelector(".search-input");
-        const filterButton = document.getElementById("filterButton");
-        const filterModal = document.getElementById("filterModal");
-        const closeFilter = document.getElementById("closeFilter");
-        const bookCards = document.querySelectorAll(".book-card");
-        searchInput.addEventListener("input", function () {
-          const searchTerm = this.value.toLowerCase().trim();
-          bookCards.forEach((card) => {
-            const title = card.querySelector("h3").textContent.toLowerCase();
-            const author = card.querySelector("p").textContent.toLowerCase();
-            const isbn = card.getAttribute("data-isbn")?.toLowerCase() || "";
-            if (
-              title.includes(searchTerm) ||
-              author.includes(searchTerm) ||
-              isbn.includes(searchTerm)
-            ) {
-              card.style.display = "";
-              card.classList.remove("hidden");
-            } else {
-              card.style.display = "none";
-              card.classList.add("hidden");
-            }
-          });
-        });
-        searchInput.addEventListener("focus", function () {
-          this.classList.add("ring-2", "ring-primary", "ring-opacity-50");
-        });
-        searchInput.addEventListener("blur", function () {
-          this.classList.remove("ring-2", "ring-primary", "ring-opacity-50");
-        });
-        filterButton.addEventListener("click", function () {
-          filterModal.classList.remove("hidden");
-          document.body.style.overflow = "hidden";
-        });
-        closeFilter.addEventListener("click", function () {
-          filterModal.classList.add("hidden");
-          document.body.style.overflow = "";
-        });
-        filterModal.addEventListener("click", function (e) {
-          if (e.target === filterModal) {
-            filterModal.classList.add("hidden");
-            document.body.style.overflow = "";
-          }
-        });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeModal();
+        }
       });
     </script>
   </body>
