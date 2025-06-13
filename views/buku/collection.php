@@ -1,8 +1,8 @@
 <?php
-session_start();
 
-include '../../includes/connection_db.php'; 
+
 include '../../includes/header.php';
+include '../../includes/connection_db.php'; 
 
 $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin';
 

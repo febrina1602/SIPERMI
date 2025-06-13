@@ -1,15 +1,12 @@
 <?php
-// Memulai session jika belum ada
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Menentukan status login dan role pengguna
 $isLoggedIn = isset($_SESSION['user']);
 $userRole = $isLoggedIn ? $_SESSION['user']['role'] : 'guest';
 $userName = $isLoggedIn ? $_SESSION['user']['nama'] : 'Tamu';
 
-// Menentukan path dasar proyek Anda
 $baseUrl = "http://localhost/sipermi/"; 
 
 ?>
