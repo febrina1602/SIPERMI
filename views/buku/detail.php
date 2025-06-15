@@ -1,12 +1,22 @@
 <?php
+
+include '../../includes/header.php';
 include '../../includes/connection_db.php';
+
+$id_user = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
+
+$book = null;
+$book_id = null;
+$error_message = null;
+$ulasan = [];
+$ulasan_user = null;
 
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $error_message = "Buku tidak ditemukan. ID tidak valid atau tidak disertakan.";
 } else {
-    $book_id = $_GET['id'];
+    $book_id = (int) $_GET['id'];
 
-    $query_buku = "
+    $query_book = "
         SELECT 
             b.id, b.judul, b.penulis, b.penerbit, b.tahun_terbit,
             b.isbn, b.stok, b.deskripsi, b.image_path,
@@ -19,14 +29,33 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
             b.id = ?
         LIMIT 1
     ";
-    
-    $stmt = mysqli_prepare($conn, $query_buku);
-    mysqli_stmt_bind_param($stmt, "i", $book_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $book = mysqli_fetch_assoc($result);
+    $stmt = $conn->prepare($query_book);
+    $stmt->bind_param("i", $book_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        $book = $result->fetch_assoc();
+
+        $stmt = $conn->prepare("SELECT ub.*, a.nama FROM ulasan_buku ub JOIN anggota a ON ub.id_anggota = a.id WHERE ub.id_buku = ?");
+        $stmt->bind_param("i", $book_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result) {
+            $ulasan = $result->fetch_all(MYSQLI_ASSOC);
+        }
+
+        if ($id_user) {
+            $check = $conn->prepare("SELECT * FROM ulasan_buku WHERE id_buku = ? AND id_anggota = ?");
+            $check->bind_param("ii", $book_id, $id_user);
+            $check->execute();
+            $ulasan_user_result = $check->get_result();
+            if ($ulasan_user_result) {
+                $ulasan_user = $ulasan_user_result->fetch_assoc();
+            }
+        }
+
     } else {
         $error_message = "Buku dengan ID " . htmlspecialchars($book_id) . " tidak ditemukan.";
     }
@@ -143,7 +172,83 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 
     <?php endif; ?>
 
+    <div class="mt-8">
+    <h3 class="text-xl font-semibold mb-2">Ulasan Pembaca</h3>
+
+    <?php if (count($ulasan) === 0): ?>
+        <p class="text-gray-500">Belum ada ulasan untuk buku ini.</p>
+    <?php else: ?>
+        <?php foreach ($ulasan as $u): ?>
+            <div class="relative bg-gray-100 p-4 rounded-lg mb-3">
+                <?php if ($id_user && ($u['id_anggota'] == $id_user || $_SESSION['user']['role'] === 'admin')): ?>
+                    <div class="absolute top-2 right-2">
+                        <button onclick="toggleDropdown(this)" class="text-gray-600 hover:text-black text-xl px-2">
+                            &#8942;
+                        </button>
+                        <div class="dropdown-menu hidden absolute right-0 mt-2 w-24 z-30 bg-white border border-gray-300 rounded shadow">
+                            <a href="edit_review.php?id=<?= $u['id'] ?>&book=<?= $book_id ?>" class="block text-center text-white font-semibold bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-t">Ubah</a>
+                            <a href="delete_review.php?id=<?= $u['id'] ?>&book=<?= $book_id ?>" onclick="return confirm('Yakin ingin menghapus ulasan ini?')" class="block text-center text-white font-semibold bg-red-600 hover:bg-red-700 px-3 py-2 rounded-b">Hapus</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div class="font-semibold"><?= htmlspecialchars($u['nama']) ?></div>
+                <div class="text-yellow-500 mb-1">
+                    <?= str_repeat("★", $u['rating']) ?><?= str_repeat("☆", 5 - $u['rating']) ?>
+                </div>
+                <p><?= nl2br(htmlspecialchars($u['komentar'])) ?></p>
+                <small class="text-gray-500"><?= date("d M Y H:i", strtotime($u['tanggal_ulasan'])) ?></small>
+            </div>
+        <?php endforeach ?>
+    <?php endif ?>
+
+    <?php if ($id_user && !$ulasan_user): ?>
+        <hr class="my-4">
+        <h4 class="text-lg font-semibold mb-2">Tulis Ulasan Anda</h4>
+        <form method="post" action="review.php">
+            <input type="hidden" name="book_id" value="<?= $book_id ?>">
+            <label class="block mb-1 font-medium">Rating (1–5)</label>
+            <select name="rating" class="border rounded px-2 py-1 mb-2 w-24" required>
+                <option value="">Pilih</option>
+                <?php for ($i = 1; $i <= 5; $i++): ?>
+                    <option value="<?= $i ?>"><?= $i ?> ★</option>
+                <?php endfor ?>
+            </select>
+
+            <label class="block mb-1 font-medium">Komentar</label>
+            <textarea name="komentar" rows="3" class="border rounded w-full px-3 py-2 mb-2" required></textarea>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Kirim Ulasan</button>
+        </form>
+    <?php elseif (!$id_user): ?>
+        <p class="text-gray-500 italic mt-4">Login untuk memberikan ulasan.</p>
+    <?php endif ?>
+</div>
+
     </div>
+
+
+    <script>
+        function toggleDropdown(el) {
+            const menu = el.nextElementSibling;
+            const isVisible = menu.classList.contains("hidden");
+            
+            document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.add("hidden"));
+
+            if (isVisible) {
+                menu.classList.remove("hidden");
+            } else {
+                menu.classList.add("hidden");
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-menu') && !e.target.closest('button')) {
+                document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.add("hidden"));
+            }
+        });
+    </script>
+
 
 </body>
 </html>

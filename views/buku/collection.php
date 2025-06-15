@@ -1,6 +1,4 @@
 <?php
-
-
 include '../../includes/header.php';
 include '../../includes/connection_db.php'; 
 
@@ -14,7 +12,7 @@ if ($result_kategori) {
         $categories[] = $row;
     }
 }
-$active_category_name = 'Novel';
+
 
 $query_buku = "SELECT b.id, b.judul, b.penulis, b.penerbit, b.stok, b.image_path, k.nama_kategori FROM buku AS b LEFT JOIN kategori_buku AS k ON b.id_kategori = k.id ORDER BY b.created_at DESC";
 $result_buku = mysqli_query($conn, $query_buku);

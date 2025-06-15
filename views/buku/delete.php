@@ -26,7 +26,7 @@ $book = mysqli_fetch_assoc($result_image);
 if ($book && !empty($book['image_path'])) {
     $filename = basename($book['image_path']);
     
-    $physical_path = '../public/images/buku/' . $filename;
+    $physical_path = '../../assets/images/buku/' . $filename;
     
     if (file_exists($physical_path)) {
         unlink($physical_path);
