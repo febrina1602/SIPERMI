@@ -65,7 +65,7 @@
         <h2 class="text-2xl font-bold mb-2 drop-shadow-md">SIPERMI</h2>
         
         <nav class="hidden md:flex space-x-6">
-          <a href="#" class="py-2 hover:underline underline-offset-4"
+          <a href="/SIPERMI/views/dashboard.php" class="py-2 hover:underline underline-offset-4"
             >Beranda</a
           >
           <a href="#" class="py-2 hover:underline underline-offset-4"
