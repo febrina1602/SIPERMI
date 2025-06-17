@@ -100,6 +100,7 @@ INSERT INTO `kategori_buku` (`id`, `nama_kategori`) VALUES
 (2, 'Self-Development');
 
 ALTER TABLE `kategori_buku` ADD COLUMN `jumlah_buku` INT DEFAULT 0;
+ALTER TABLE kategori_buku ADD COLUMN cover_path VARCHAR(255) DEFAULT NULL AFTER jumlah_buku;
 
 UPDATE kategori_buku k
 SET jumlah_buku = (

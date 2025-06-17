@@ -27,12 +27,28 @@ if (isset($_GET['id'])) {
         die("Tidak dapat menghapus kategori karena masih ada buku yang terkait.");
     }
 
+    // Ambil path cover untuk dihapus
+    $stmt_cover = mysqli_prepare($conn, "SELECT cover_path FROM kategori_buku WHERE id = ?");
+    mysqli_stmt_bind_param($stmt_cover, "i", $id);
+    mysqli_stmt_execute($stmt_cover);
+    mysqli_stmt_bind_result($stmt_cover, $cover_path);
+    mysqli_stmt_fetch($stmt_cover);
+    mysqli_stmt_close($stmt_cover);
+
     // Jika aman, lakukan penghapusan
     $stmt_delete = mysqli_prepare($conn, "DELETE FROM kategori_buku WHERE id = ?");
     mysqli_stmt_bind_param($stmt_delete, "i", $id);
 
     if (mysqli_stmt_execute($stmt_delete)) {
         mysqli_stmt_close($stmt_delete);
+        
+        // Hapus cover jika ada
+        if (!empty($cover_path)) {
+            $filePath = __DIR__ . '/../../..' . $cover_path;
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
         
         // Update jumlah buku semua kategori
         updateBookCounts($conn);
@@ -52,4 +68,3 @@ if (isset($_GET['id'])) {
 } else {
     die("ID kategori tidak ditemukan.");
 }
-?>

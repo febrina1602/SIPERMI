@@ -4,6 +4,8 @@ include '../../../includes/connection_db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
     $nama_kategori = trim($_POST['nama_kategori']);
+    $jumlah_buku = intval($_POST['jumlah_buku']);
+    $existing_cover = $_POST['existing_cover'] ?? '';
 
     // Validasi input kosong
     if (empty($nama_kategori)) {
@@ -23,15 +25,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     mysqli_stmt_close($stmt);
 
+    // Handle upload gambar
+    $cover_path = $existing_cover;
+    if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['cover'];
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid('cover_') . '.' . $ext;
+        $uploadDir = __DIR__ . '/../../../assets/images/kategori/';
+        
+        // Pastikan direktori ada
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        
+        $targetPath = $uploadDir . $filename;
+        
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            $cover_path = '/sipermi/assets/images/kategori/' . $filename;
+            
+            // Hapus cover lama jika ada
+            if (!empty($existing_cover)) {
+                $oldPath = __DIR__ . '/../../..' . $existing_cover;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+        }
+    }
+
     // Jika ID ada, update. Jika tidak, insert baru
     if ($id > 0) {
-        $query = "UPDATE kategori_buku SET nama_kategori = ? WHERE id = ?";
+        $query = "UPDATE kategori_buku SET nama_kategori = ?, jumlah_buku = ?, cover_path = ? WHERE id = ?";
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "si", $nama_kategori, $id);
+        mysqli_stmt_bind_param($stmt, "sisi", $nama_kategori, $jumlah_buku, $cover_path, $id);
     } else {
-        $query = "INSERT INTO kategori_buku (nama_kategori) VALUES (?)";
+        $query = "INSERT INTO kategori_buku (nama_kategori, jumlah_buku, cover_path) VALUES (?, ?, ?)";
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "s", $nama_kategori);
+        mysqli_stmt_bind_param($stmt, "sis", $nama_kategori, $jumlah_buku, $cover_path);
     }
 
     // Eksekusi query insert/update
@@ -60,4 +90,3 @@ function updateBookCounts($conn) {
                     )";
     mysqli_query($conn, $updateQuery);
 }
-?>
