@@ -4,9 +4,9 @@ include '../../../includes/connection_db.php';
 
 // Ambil data kategori
 $query = "
-    SELECT id, nama_kategori
+    SELECT id, nama_kategori, jumlah_buku
     FROM kategori_buku
-    ORDER BY nama_kategori ASC
+    ORDER BY id ASC
 ";
 
 $result = mysqli_query($conn, $query);
@@ -16,6 +16,23 @@ if ($result) {
         $categories[] = $row;
     }
 }
+
+// Handle ID resequencing
+if (isset($_GET['resequence'])) {
+    // Reset auto increment
+    mysqli_query($conn, "ALTER TABLE kategori_buku AUTO_INCREMENT = 1");
+    
+    // Resequence IDs
+    $updateQuery = "SET @count = 0;
+                   UPDATE kategori_buku SET id = @count:= @count + 1;
+                   ALTER TABLE kategori_buku AUTO_INCREMENT = 1;";
+    
+    mysqli_multi_query($conn, $updateQuery);
+    
+    // Refresh page
+    header("Location: admin_kategori.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -24,21 +41,24 @@ if ($result) {
     <meta charset="UTF-8">
     <title>Manajemen Kategori Buku</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-white min-h-screen flex flex-col">
 
   <div class="container mx-auto px-4 py-10 flex-grow">
-    <h1 class="text-4xl font-bold mb-10 text-center text-blue-800 drop-shadow">📚 Manajemen Kategori Buku</h1>
+    <h1 class="text-4xl font-bold mb-10 text-center text-blue-800 drop-shadow">
+      <i class="fas fa-bookmark mr-3"></i>Manajemen Kategori Buku
+    </h1>
 
     <div class="max-w-5xl mx-auto">
-      <div class="flex justify-end mb-6">
-       <button onclick="openAddModal()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
-  <span class="text-white text-lg">+</span>
-  Tambah Kategori
-</button>
-
-
-
+      <div class="flex justify-between mb-6">
+        <button onclick="openAddModal()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
+          <i class="fas fa-plus-circle"></i> Tambah Kategori
+        </button>
+        
+        <button onclick="resequenceIDs()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
+          <i class="fas fa-sync-alt"></i> Reset Urutan ID
+        </button>
       </div>
 
       <div class="bg-white shadow-xl rounded-xl p-6">
@@ -47,21 +67,27 @@ if ($result) {
             <tr class="bg-blue-100 text-blue-800 border-b">
               <th class="py-3 px-4 text-left">ID</th>
               <th class="py-3 px-4 text-left">Nama Kategori</th>
+              <th class="py-3 px-4 text-left">Jumlah Buku</th>
               <th class="py-3 px-4 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($categories as $index => $category): ?>
+            <?php foreach ($categories as $category): ?>
             <tr class="border-b hover:bg-blue-50 transition">
-              <td class="py-3 px-4"><?= $index + 1 ?></td>
+              <td class="py-3 px-4 font-semibold"><?= $category['id'] ?></td>
               <td class="py-3 px-4"><?= htmlspecialchars($category['nama_kategori']) ?></td>
               <td class="py-3 px-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
+                  <i class="fas fa-book mr-2"></i> <?= $category['jumlah_buku'] ?>
+                </span>
+              </td>
+              <td class="py-3 px-4">
                 <div class="flex gap-2">
-                  <button onclick="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars(addslashes($category['nama_kategori'])) ?>')" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow-sm">
-                    ✏️ Edit
+                  <button onclick="openEditModal(<?= $category['id'] ?>, '<?= htmlspecialchars(addslashes($category['nama_kategori'])) ?>', <?= $category['jumlah_buku'] ?>)" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow-sm">
+                    <i class="fas fa-edit mr-1"></i> Edit
                   </button>
                   <button onclick="confirmDelete(<?= $category['id'] ?>)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow-sm">
-                    🗑️ Hapus
+                    <i class="fas fa-trash-alt mr-1"></i> Hapus
                   </button>
                 </div>
               </td>
@@ -70,7 +96,9 @@ if ($result) {
 
             <?php if (empty($categories)): ?>
               <tr>
-                <td colspan="3" class="text-center py-6 text-gray-500 italic">Belum ada kategori.</td>
+                <td colspan="4" class="text-center py-6 text-gray-500 italic">
+                  <i class="fas fa-book-open mr-2"></i> Belum ada kategori.
+                </td>
               </tr>
             <?php endif; ?>
           </tbody>
@@ -82,16 +110,39 @@ if ($result) {
   <!-- Modal Tambah/Edit -->
   <div id="kategoriModal" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50 transition">
     <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 animate-fade-in">
-      <h2 id="modalTitle" class="text-2xl font-bold text-blue-700 text-center mb-6">Tambah Kategori</h2>
+      <h2 id="modalTitle" class="text-2xl font-bold text-blue-700 text-center mb-6">
+        <i class="fas fa-bookmark mr-2"></i> <span id="titleText">Tambah Kategori</span>
+      </h2>
       <form id="kategoriForm" method="POST" action="kategori_proses.php">
         <input type="hidden" name="id" id="kategoriId">
+        
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Nama Kategori</label>
-          <input type="text" name="nama_kategori" id="namaKategori" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-heading mr-2"></i>Nama Kategori
+          </label>
+          <input type="text" name="nama_kategori" id="namaKategori" required 
+                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                 placeholder="Contoh: Novel, Komik, Sains">
         </div>
+        
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-book mr-2"></i>Jumlah Buku Tersedia
+          </label>
+          <input type="number" name="jumlah_buku" id="jumlahBuku" min="0" required 
+                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                 placeholder="Jumlah buku dalam kategori">
+        </div>
+        
         <div class="flex justify-end mt-6 gap-3">
-          <button type="button" onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">Batal</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow">Simpan</button>
+          <button type="button" onclick="closeModal()" 
+                  class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">
+            <i class="fas fa-times mr-1"></i> Batal
+          </button>
+          <button type="submit" 
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow transition">
+            <i class="fas fa-save mr-1"></i> Simpan
+          </button>
         </div>
       </form>
     </div>
@@ -105,15 +156,17 @@ if ($result) {
     function openAddModal() {
       document.getElementById('kategoriId').value = '';
       document.getElementById('namaKategori').value = '';
-      document.getElementById('modalTitle').innerText = 'Tambah Kategori';
+      document.getElementById('jumlahBuku').value = '0';
+      document.getElementById('titleText').innerText = 'Tambah Kategori';
       document.getElementById('kategoriModal').classList.remove('hidden');
       document.getElementById('kategoriModal').classList.add('flex');
     }
 
-    function openEditModal(id, nama) {
+    function openEditModal(id, nama, jumlah) {
       document.getElementById('kategoriId').value = id;
       document.getElementById('namaKategori').value = nama;
-      document.getElementById('modalTitle').innerText = 'Edit Kategori';
+      document.getElementById('jumlahBuku').value = jumlah;
+      document.getElementById('titleText').innerText = 'Edit Kategori';
       document.getElementById('kategoriModal').classList.remove('hidden');
       document.getElementById('kategoriModal').classList.add('flex');
     }
@@ -128,7 +181,12 @@ if ($result) {
         window.location.href = 'kategori_hapus.php?id=' + id;
       }
     }
+    
+    function resequenceIDs() {
+      if (confirm('Reset urutan ID kategori? Semua ID akan diurutkan ulang mulai dari 1.')) {
+        window.location.href = 'admin_kategori.php?resequence=true';
+      }
+    }
   </script>
 </body>
-
 </html>

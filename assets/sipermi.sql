@@ -99,6 +99,53 @@ INSERT INTO `kategori_buku` (`id`, `nama_kategori`) VALUES
 (1, 'Novel'),
 (2, 'Self-Development');
 
+ALTER TABLE `kategori_buku` ADD COLUMN `jumlah_buku` INT DEFAULT 0;
+
+UPDATE kategori_buku k
+SET jumlah_buku = (
+    SELECT COUNT(*) 
+    FROM buku 
+    WHERE id_kategori = k.id
+);
+
+DELIMITER //
+CREATE TRIGGER after_buku_insert
+AFTER INSERT ON buku
+FOR EACH ROW
+BEGIN
+    UPDATE kategori_buku
+    SET jumlah_buku = (SELECT COUNT(*) FROM buku WHERE id_kategori = NEW.id_kategori)
+    WHERE id = NEW.id_kategori;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER after_buku_update
+AFTER UPDATE ON buku
+FOR EACH ROW
+BEGIN
+    IF OLD.id_kategori != NEW.id_kategori THEN
+        UPDATE kategori_buku
+        SET jumlah_buku = (SELECT COUNT(*) FROM buku WHERE id_kategori = OLD.id_kategori)
+        WHERE id = OLD.id_kategori;
+        
+        UPDATE kategori_buku
+        SET jumlah_buku = (SELECT COUNT(*) FROM buku WHERE id_kategori = NEW.id_kategori)
+        WHERE id = NEW.id_kategori;
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER after_buku_delete
+AFTER DELETE ON buku
+FOR EACH ROW
+BEGIN
+    UPDATE kategori_buku
+    SET jumlah_buku = (SELECT COUNT(*) FROM buku WHERE id_kategori = OLD.id_kategori)
+    WHERE id = OLD.id_kategori;
+END//
+DELIMITER ;
 -- --------------------------------------------------------
 
 --

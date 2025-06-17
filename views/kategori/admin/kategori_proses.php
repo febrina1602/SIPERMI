@@ -37,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Eksekusi query insert/update
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_close($stmt);
+        
+        // Update book counts for all categories
+        updateBookCounts($conn);
+        
         header("Location: admin_kategori.php");
         exit;
     } else {
@@ -45,5 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     die("Akses tidak sah.");
+}
+
+function updateBookCounts($conn) {
+    $updateQuery = "UPDATE kategori_buku k
+                    SET jumlah_buku = (
+                        SELECT COUNT(*) 
+                        FROM buku 
+                        WHERE id_kategori = k.id
+                    )";
+    mysqli_query($conn, $updateQuery);
 }
 ?>
