@@ -45,10 +45,16 @@ if (isset($_GET['resequence'])) {
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-white min-h-screen flex flex-col">
 
-  <div class="container mx-auto px-4 py-10 flex-grow">
-    <h1 class="text-4xl font-bold mb-10 text-center text-blue-800 drop-shadow">
-      <i class="fas fa-bookmark mr-3"></i>Manajemen Kategori Buku
-    </h1>
+<div class="container mx-auto px-4 py-10 flex-grow">
+  <h1 class="text-4xl font-bold mb-10 text-center drop-shadow flex items-center justify-center gap-3 leading-relaxed">
+    <img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Ikon Buku" class="w-12 h-12 object-contain">
+    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500">
+      Manajemen Kategori Buku
+    </span>
+  </h1>
+</div>
+
+
 
     <div class="max-w-5xl mx-auto">
       <div class="flex justify-between mb-6">
