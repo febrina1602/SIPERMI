@@ -1,4 +1,5 @@
 <?php
+include '../../../includes/header.php';
 include '../../../includes/connection_db.php';
 
 // Ambil semua kategori buku dari database
@@ -93,32 +94,7 @@ function getBooksByCategory($category_id) {
   </head>
   <body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] text-white">
-      <div
-        class="container mx-auto px-4 py-3 flex justify-between items-center"
-      >
-        <h2 class="text-2xl font-bold mb-2 drop-shadow-md">SIPERMI</h2>
-        
-        <nav class="hidden md:flex space-x-6">
-          <a href="/SIPERMI/views/dashboard.php" class="py-2 hover:underline underline-offset-4"
-            >Beranda</a
-          >
-          <a href="#" class="py-2 hover:underline underline-offset-4"
-            >Buku</a
-          >
-          <a href="#" class="py-2 font-medium underline underline-offset-4"
-            >Kategori Buku</a
-          >
-          <a href="#" class="py-2 hover:underline underline-offset-4"
-            >Anggota</a
-          >
-          <a href="#" class="py-2 hover:underline underline-offset-4"
-            >Peminjaman</a
-          >
-        </nav>
-      </div>
-    </header>
+    
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-6">
       <!-- Page Title -->
@@ -198,99 +174,7 @@ function getBooksByCategory($category_id) {
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] text-white ">
-      <div class="container mx-auto px-4 py-4">
-        <div class="text-center mb-8">
-          <h2 class="text-5xl font-bold mb-2 drop-shadow-md">SIPERMI</h2>
-          <p class="text-gray-100">
-            Nikmati Kemudahan Akses Buku Hanya di Perpustakaan Mini
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3
-              class="text-lg font-semibold mb-4 border-b border-blue-400 pb-2"
-            >
-              Layanan
-            </h3>
-            <ul class="space-y-2">
-              <li class="flex items-center">
-                <i class="ri-search-line mr-2"></i>
-                <a href="#" class="hover:underline">Pencarian Buku</a>
-              </li>
-              <li class="flex items-center">
-                <i class="ri-book-open-line mr-2"></i>
-                <a href="#" class="hover:underline"
-                  >Peminjaman & Pengembalian</a
-                >
-              </li>
-              <li class="flex items-center">
-                <i class="ri-information-line mr-2"></i>
-                <a href="#" class="hover:underline">Lihat Status Buku</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3
-              class="text-lg font-semibold mb-4 border-b border-blue-400 pb-2"
-            >
-              Bantuan & Kebijakan
-            </h3>
-            <ul class="space-y-2">
-              <li class="flex items-center">
-                <i class="ri-question-line mr-2"></i>
-                <a href="#" class="hover:underline">Panduan Pengguna</a>
-              </li>
-              <li class="flex items-center">
-                <i class="ri-shield-line mr-2"></i>
-                <a href="#" class="hover:underline">Kebijakan Privasi</a>
-              </li>
-              <li class="flex items-center">
-                <i class="ri-file-list-3-line mr-2"></i>
-                <a href="#" class="hover:underline">Tata Tertib Perpustakaan</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3
-              class="text-lg font-semibold mb-4 border-b border-blue-400 pb-2"
-            >
-              Ikuti Kami:
-            </h3>
-            <div class="flex space-x-4 mb-4">
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
-              >
-                <i class="ri-instagram-line"></i>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
-              >
-                <i class="ri-facebook-fill"></i>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
-              >
-                <i class="ri-twitter-x-line"></i>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30"
-              >
-                <i class="ri-youtube-line"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="border-t border-blue-400 mt-8 pt-6 text-center text-sm">
-          <p>© 2025 | SIPERMI. Hak Cipta Dilindungi.</p>
-        </div>
-      </div>
-    </footer>
+    <?php include '../../../includes/footer.php'; ?>
 
     <script>
       // Function to show book details modal

@@ -29,16 +29,16 @@ $baseUrl = "http://localhost/sipermi/";
                     <ul class="flex gap-6 text-sm">
                         <?php if ($userRole === 'admin'): ?>
                           <li><a href="<?= $baseUrl ?>views/buku/collection.php" class="transition-colors hover:text-slate-200">Kelola Buku</a></li>
-                          <li><a href="<?= $baseUrl ?>/views/kategori/kategori.php" class="transition-colors hover:text-slate-200">Kategori</a></li>
-                          <li><a href="<?= $baseUrl ?>views/peminjaman/peminjaman.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
+                          <li><a href="<?= $baseUrl ?>views/kategori/admin/admin_kategori.php" class="transition-colors hover:text-slate-200">Kategori</a></li>
+                          <li><a href="<?= $baseUrl ?>views/peminjaman/riwayat.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
                           <li><a href="<?= $baseUrl ?>views/anggota/anggota.php" class="transition-colors hover:text-slate-200">Anggota</a></li>
                           <li><a href="<?= $baseUrl ?>views/dashboard.php" class="transition-colors hover:text-slate-200">Dasbor</a></li>
                         
                         <?php elseif ($userRole === 'user'): ?>
                           <li><a href="<?= $baseUrl ?>views/buku/collection.php" class="transition-colors hover:text-slate-200">Koleksi Buku</a></li>
-                          <li><a href="<?= $baseUrl ?>/views/kategori/anggota/kategori.php" class="transition-colors hover:text-slate-200">Katalog Buku</a></li>
-                          <li><a href="<?= $baseUrl ?>views/peminjaman/peminjaman.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
-                          <li><a href="<?= $baseUrl ?>views/anggota/anggota.php" class="transition-colors hover:text-slate-200">Profil</a></li>
+                          <li><a href="<?= $baseUrl ?>views/kategori/anggota/kategori.php" class="transition-colors hover:text-slate-200">Kategori</a></li>
+                          <li><a href="<?= $baseUrl ?>views/peminjaman/riwayat.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
+                          <li><a href="<?= $baseUrl ?>views/anggota/profile/profile.php" class="transition-colors hover:text-slate-200">Profil</a></li>
                           <li><a href="<?= $baseUrl ?>views/dashboard.php" class="transition-colors hover:text-slate-200">Dasbor</a></li>
                         <?php endif; ?>
                     </ul>
@@ -64,14 +64,14 @@ $baseUrl = "http://localhost/sipermi/";
                         <ul class="flex flex-col gap-2">
                              <?php if ($userRole === 'admin'): ?>
                                 <li><a href="<?= $baseUrl ?>views/buku/collection.php" class="transition-colors hover:text-slate-200">Kelola Buku</a></li>
-                                <li><a href="<?= $baseUrl ?>views/kategori/kategori.php" class="transition-colors hover:text-slate-200">Kategori</a></li>
+                                <li><a href="<?= $baseUrl ?>views/kategori/admin/admin_kategori.php" class="transition-colors hover:text-slate-200">Kategori</a></li>
                                 <li><a href="<?= $baseUrl ?>views/peminjaman/peminjaman.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
                                 <li><a href="<?= $baseUrl ?>views/anggota/anggota.php" class="transition-colors hover:text-slate-200">Anggota</a></li>
                                 <li><a href="<?= $baseUrl ?>views/dashboard.php" class="transition-colors hover:text-slate-200">Dasbor</a></li>
                         
                             <?php elseif ($userRole === 'user'): ?>
                                 <li><a href="<?= $baseUrl ?>views/buku/collection.php" class="transition-colors hover:text-slate-200">Koleksi Buku</a></li>
-                                <li><a href="<?= $baseUrl ?>views/kategori/kategori.php" class="transition-colors hover:text-slate-200">Katalog Buku</a></li>
+                                <li><a href="<?= $baseUrl ?>views/kategori/anggota/kategori.php" class="transition-colors hover:text-slate-200">Katalog Buku</a></li>
                                 <li><a href="<?= $baseUrl ?>views/peminjaman/peminjaman.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
                                 <li><a href="<?= $baseUrl ?>views/anggota/anggota.php" class="transition-colors hover:text-slate-200">Profil</a></li>
                                 <li><a href="<?= $baseUrl ?>views/dashboard.php" class="transition-colors hover:text-slate-200">Dasbor</a></li>

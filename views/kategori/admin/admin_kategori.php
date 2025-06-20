@@ -191,9 +191,9 @@ if (isset($_GET['resequence'])) {
     </div>
   </div>
 
-  <footer class="mt-12">
+  
     <?php include '../../../includes/footer.php'; ?>
-  </footer>
+  
 
   <script>
     function openAddModal() {
