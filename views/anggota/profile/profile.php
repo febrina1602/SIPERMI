@@ -50,10 +50,6 @@ if (isset($_SESSION['success'])) {
   </div>
 
   <div class="flex flex-col lg:flex-row items-center lg:items-start gap-10 mt-4 z-10">
-    <div class="flex-shrink-0">
-      <img src="https://cdn-icons-png.flaticon.com/512/4476/4476490.png" alt="profil buku" class="w-40 h-40 rounded-full border-4 border-blue-200 shadow-md bg-white p-2">
-      <p class="text-center mt-2 text-sm italic" style="color: #0066A1;">Foto profil otomatis</p>
-    </div>
     
     <div class="flex-1 space-y-6 mt-4 lg:mt-0" style="color: #0066A1;">
       <div>
