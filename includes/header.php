@@ -37,7 +37,7 @@ $baseUrl = "http://localhost/sipermi/";
                         <?php elseif ($userRole === 'user'): ?>
                           <li><a href="<?= $baseUrl ?>views/buku/collection.php" class="transition-colors hover:text-slate-200">Koleksi Buku</a></li>
                           <li><a href="<?= $baseUrl ?>views/kategori/anggota/kategori.php" class="transition-colors hover:text-slate-200">Kategori</a></li>
-                          <li><a href="<?= $baseUrl ?>views/peminjaman/peminjaman.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
+                          <li><a href="<?= $baseUrl ?>views/peminjaman/riwayat.php" class="transition-colors hover:text-slate-200">Peminjaman</a></li>
                           <li><a href="<?= $baseUrl ?>views/anggota/profile/profile.php" class="transition-colors hover:text-slate-200">Profil</a></li>
                           <li><a href="<?= $baseUrl ?>views/dashboard.php" class="transition-colors hover:text-slate-200">Dasbor</a></li>
                         <?php endif; ?>

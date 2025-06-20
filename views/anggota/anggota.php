@@ -1,4 +1,3 @@
-<?php include_once('../../includes/header.php'); ?>
 <?php include_once('../../includes/connection_db.php'); ?>
 <?php
 if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
@@ -9,6 +8,8 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
     header("Location: anggota.php");
     exit;
 }
+
+include_once('../../includes/header.php');
 ?>
 
 <!DOCTYPE html>

@@ -1,4 +1,3 @@
-<?php include_once('../../includes/header.php'); ?>
 <?php
 include_once('../../includes/connection_db.php');
 
@@ -35,6 +34,8 @@ if (!$anggota) {
     header("Location: anggota.php");
     exit;
 }
+
+include_once('../../includes/header.php');
 ?>
 
 <!DOCTYPE html>

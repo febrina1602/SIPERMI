@@ -9,14 +9,14 @@ if ($is_admin) {
   $peminjaman = mysqli_query($conn, 
     "SELECT p.*, u.nama AS nama_user, b.judul AS judul_buku 
      FROM peminjaman p 
-     JOIN users u ON p.id_anggota = u.id 
+     JOIN anggota u ON p.id_anggota = u.id 
      JOIN buku b ON p.id_buku = b.id 
      WHERE p.status = 'dipinjam'");
 
   $pengembalian = mysqli_query($conn, 
     "SELECT p.*, u.nama AS nama_user, b.judul AS judul_buku 
      FROM peminjaman p 
-     JOIN users u ON p.id_anggota = u.id 
+     JOIN anggota u ON p.id_anggota = u.id 
      JOIN buku b ON p.id_buku = b.id 
      WHERE p.status = 'dikembalikan'");
 } else {

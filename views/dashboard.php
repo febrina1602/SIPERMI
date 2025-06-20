@@ -14,11 +14,11 @@ $is_admin = $role === 'admin';
 // --- Untuk Admin
 if ($is_admin) {
   $jumlah_buku = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM buku"))['total'];
-  $jumlah_anggota = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM users WHERE role = 'anggota'"))['total'];
+  $jumlah_anggota = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM anggota WHERE role = 'user'"))['total'];
   $jumlah_peminjaman = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM peminjaman"))['total'];
 
   $peminjaman = mysqli_query($conn, "SELECT p.*, u.nama, b.judul FROM peminjaman p 
-    JOIN users u ON p.id_anggota = u.id 
+    JOIN anggota u ON p.id_anggota = u.id 
     JOIN buku b ON p.id_buku = b.id 
     ORDER BY p.tanggal_peminjaman DESC");
 
@@ -75,7 +75,7 @@ if ($is_admin) {
       <table class="min-w-full text-sm text-left">
         <thead class="bg-[#0978B6] text-white">
           <tr>
-            <th class="px-6 py-3 border">#</th>
+            <th class="px-6 py-3 border">No</th>
             <?php if ($is_admin): ?>
               <th class="px-6 py-3 border">Nama</th>
             <?php endif; ?>
