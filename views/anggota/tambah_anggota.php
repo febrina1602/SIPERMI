@@ -12,10 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = mysqli_real_escape_string($conn, $_POST['nama']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $nomor = mysqli_real_escape_string($conn, $_POST['nomor']);
-    $password = password_hash('123456', PASSWORD_DEFAULT); 
+    $role = ($_POST['role'] === 'admin') ? 'admin' : 'user';
+    $password_plain = $_POST['password'];
+    $password = password_hash($password_plain, PASSWORD_DEFAULT); 
 
     $query = "INSERT INTO anggota (nama, email, nomor, password, role, registered_at)
-          VALUES ('$nama', '$email', '$nomor', '$password', 'admin', NOW())";
+              VALUES ('$nama', '$email', '$nomor', '$password', '$role', NOW())";
 
     if (mysqli_query($conn, $query)) {
         $_SESSION['success'] = "Anggota berhasil ditambahkan.";
@@ -60,10 +62,25 @@ include_once('../../includes/header.php');
                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#045481] outline-none">
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block mb-1 text-sm font-medium text-gray-700">Nomor Telepon</label>
                 <input type="text" name="nomor" required
                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#045481] outline-none">
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="password" required
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#045481] outline-none">
+            </div>
+
+            <div class="mb-6">
+                <label class="block mb-1 text-sm font-medium text-gray-700">Role</label>
+                <select name="role" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#045481] outline-none">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
             </div>
 
             <div class="flex justify-between">
