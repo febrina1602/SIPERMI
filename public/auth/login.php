@@ -49,6 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2 class="text-2xl font-bold text-[#0978B6] mb-5">Silakan Masuk Sahabat SIPERMI</h2>
         <p class="text-sm text-gray-500 mb-8">Sistem Perpustakaan Mini</p>
 
+        <?php if (isset($_SESSION['error'])): ?>
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <?= $_SESSION['error']; ?>
+          </div>
+          <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
         <form method="POST" action="login.php" class="space-y-5">
           <div>
             <label for="email" class="block text-gray-700 mb-1">Email</label>
