@@ -28,13 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-<<<<<<< HEAD
-    $insertQuery = "INSERT INTO anggota (nama, email, password, nomor) 
-                    VALUES ('$nama', '$email', '$password', '$nomor')";
-=======
     $insertQuery = "INSERT INTO anggota (nama, email, password, nomor, registered_at) 
                 VALUES ('$nama', '$email', '$password', '$nomor', NOW())";
->>>>>>> 9df788f1eb49234943c7c7e92f5962ce2e141369
 
     if (mysqli_query($conn, $insertQuery)) {
         $_SESSION['success'] = "Registrasi berhasil! Silakan login.";
