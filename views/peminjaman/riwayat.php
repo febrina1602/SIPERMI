@@ -15,7 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kembalikan'])) {
      SET status = 'dikembalikan', tanggal_pengembalian = '$tanggal_kembali' 
      WHERE id = $id_peminjaman");
 
-  // Hindari resubmission
+  header("Location: " . $_SERVER['PHP_SELF']);
+  exit();
+}
+
+// Proses hapus data pengembalian (khusus admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus']) && $is_admin) {
+  $id_peminjaman = intval($_POST['id_peminjaman']);
+  $hapus = mysqli_query($conn, "DELETE FROM peminjaman WHERE id = $id_peminjaman");
+
   header("Location: " . $_SERVER['PHP_SELF']);
   exit();
 }
@@ -101,7 +109,7 @@ if ($is_admin) {
               <td class="border p-2 capitalize">
                 <?= $row['status']; ?>
                 <?php if ($is_admin): ?>
-                  <form method="POST" action="" onsubmit="return confirm('Tandai sebagai dikembalikan?')">
+                  <form method="POST" action="" onsubmit="return confirm('Tandai sebagai dikembalikan?')" class="inline">
                     <input type="hidden" name="id_peminjaman" value="<?= $row['id']; ?>">
                     <button type="submit" name="kembalikan" class="ml-2 px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600">Kembalikan</button>
                   </form>
@@ -122,7 +130,7 @@ if ($is_admin) {
               <?php if ($is_admin): ?><th class="p-3 border">Nama</th><?php endif; ?>
               <th class="p-3 border">Judul Buku</th>
               <th class="p-3 border">Tanggal Kembali</th>
-              <th class="p-3 border">Status</th>
+              <th class="p-3 border">Status / Aksi</th>
             </tr>
           </thead>
           <tbody class="bg-white">
@@ -132,7 +140,15 @@ if ($is_admin) {
               <?php if ($is_admin): ?><td class="border p-2"><?= htmlspecialchars($row['nama_user']); ?></td><?php endif; ?>
               <td class="border p-2"><?= htmlspecialchars($row['judul_buku']); ?></td>
               <td class="border p-2"><?= $row['tanggal_pengembalian'] ?? '-'; ?></td>
-              <td class="border p-2 capitalize"><?= $row['status']; ?></td>
+              <td class="border p-2 capitalize">
+                <?= $row['status']; ?>
+                <?php if ($is_admin): ?>
+                  <form method="POST" action="" onsubmit="return confirm('Yakin ingin menghapus data ini?')" class="inline">
+                    <input type="hidden" name="id_peminjaman" value="<?= $row['id']; ?>">
+                    <button type="submit" name="hapus" class="ml-2 px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
+                  </form>
+                <?php endif; ?>
+              </td>
             </tr>
             <?php endwhile; ?>
           </tbody>
