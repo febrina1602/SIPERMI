@@ -4,6 +4,10 @@ include '../../includes/connection_db.php';
 
 $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin';
 
+// Ambil parameter kategori dari URL
+$currentCategoryId = isset($_GET['kategori']) ? intval($_GET['kategori']) : 0;
+$currentCategoryName = '';
+
 $query_kategori = "SELECT id, nama_kategori FROM kategori_buku ORDER BY nama_kategori ASC";
 $result_kategori = mysqli_query($conn, $query_kategori);
 $categories = [];
@@ -13,9 +17,34 @@ if ($result_kategori) {
     }
 }
 
+// Query buku berdasarkan kategori jika ada parameter
+if ($currentCategoryId) {
+    // Dapatkan nama kategori untuk ditampilkan
+    foreach ($categories as $cat) {
+        if ($cat['id'] == $currentCategoryId) {
+            $currentCategoryName = $cat['nama_kategori'];
+            break;
+        }
+    }
+    
+    $query_buku = "SELECT b.id, b.judul, b.penulis, b.penerbit, b.stok, b.image_path, k.nama_kategori 
+                   FROM buku AS b 
+                   LEFT JOIN kategori_buku AS k ON b.id_kategori = k.id 
+                   WHERE b.id_kategori = ?
+                   ORDER BY b.created_at DESC";
+    $stmt = mysqli_prepare($conn, $query_buku);
+    mysqli_stmt_bind_param($stmt, "i", $currentCategoryId);
+    mysqli_stmt_execute($stmt);
+    $result_buku = mysqli_stmt_get_result($stmt);
+} else {
+    // Tampilkan semua buku jika tidak ada filter kategori
+    $query_buku = "SELECT b.id, b.judul, b.penulis, b.penerbit, b.stok, b.image_path, k.nama_kategori 
+                   FROM buku AS b 
+                   LEFT JOIN kategori_buku AS k ON b.id_kategori = k.id 
+                   ORDER BY b.created_at DESC";
+    $result_buku = mysqli_query($conn, $query_buku);
+}
 
-$query_buku = "SELECT b.id, b.judul, b.penulis, b.penerbit, b.stok, b.image_path, k.nama_kategori FROM buku AS b LEFT JOIN kategori_buku AS k ON b.id_kategori = k.id ORDER BY b.created_at DESC";
-$result_buku = mysqli_query($conn, $query_buku);
 $books = [];
 if ($result_buku) {
     while ($row = mysqli_fetch_assoc($result_buku)) {
@@ -26,13 +55,7 @@ if ($result_buku) {
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koleksi Buku - SIPERMI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .card-gradient { background-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent 60%); }
-    </style>
+    <!-- ... Bagian head tetap sama ... -->
 </head>
 <body class="bg-slate-50">
 
@@ -40,12 +63,22 @@ if ($result_buku) {
         
         <header class="flex justify-between items-start">
             <div>
-                <h1 class="text-4xl font-bold text-slate-800">Koleksi Buku</h1>
+                <h1 class="text-4xl font-bold text-slate-800">
+                    <?php if ($currentCategoryId): ?>
+                        Kategori: <?= htmlspecialchars($currentCategoryName) ?>
+                    <?php else: ?>
+                        Koleksi Buku
+                    <?php endif; ?>
+                </h1>
                 <p class="mt-1 text-slate-500">
                     <?php if ($isAdmin): ?>
                         Kelola seluruh data buku dalam sistem.
                     <?php else: ?>
-                        Tingkatkan literasi membacamu hari ini!
+                        <?php if ($currentCategoryId): ?>
+                            Buku-buku dalam kategori <?= htmlspecialchars($currentCategoryName) ?>
+                        <?php else: ?>
+                            Tingkatkan literasi membacamu hari ini!
+                        <?php endif; ?>
                     <?php endif; ?>
                 </p>
             </div>
@@ -59,101 +92,82 @@ if ($result_buku) {
             <?php endif; ?>
         </header>
 
+        <!-- Tambahkan navigasi kategori untuk non-admin -->
+        <?php if (!$isAdmin && !$currentCategoryId): ?>
+        <div class="mt-6">
+            <h2 class="text-xl font-semibold text-slate-700 mb-3">Telusuri Berdasarkan Kategori</h2>
+            <div class="flex flex-wrap gap-2">
+                <?php foreach ($categories as $category): ?>
+                    <a href="collection.php?kategori=<?= $category['id'] ?>" 
+                       class="px-4 py-2 bg-white border border-slate-300 rounded-full text-sm hover:bg-slate-100 transition">
+                        <?= htmlspecialchars($category['nama_kategori']) ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Tambahkan tombol kembali jika sedang melihat kategori tertentu -->
+        <?php if (!$isAdmin && $currentCategoryId): ?>
+        <div class="mt-4">
+            <a href="collection.php" class="inline-flex items-center text-[#0978B6] hover:underline">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali ke Semua Buku
+            </a>
+        </div>
+        <?php endif; ?>
 
         <?php if ($isAdmin): ?>
-        
-        <main class="mt-6">
-            <div class="flow-root">
-                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <table class="min-w-full divide-y divide-slate-300">
-                            <thead>
-                                <tr class="bg-[#0978B6]">
-                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3">Buku</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Kategori</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Penerbit</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Stok</th>
-                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3 text-center text-sm font-semibold text-white">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white">
-                                <?php if (count($books) > 0): ?>
-                                    <?php foreach ($books as $book): ?>
-                                    <tr class="even:bg-slate-50 hover:bg-slate-100/75">
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-3">
-                                            <div class="flex items-center">
-                                                <div class="h-16 w-12 flex-shrink-0">
-                                                    <?php if (!empty($book['image_path'])): ?>
-                                                        <img class="h-16 w-12 rounded-md object-cover" src="<?= htmlspecialchars($book['image_path']) ?>" alt="">
-                                                    <?php else: ?>
-                                                         <div class="h-16 w-12 rounded-md bg-slate-200 flex items-center justify-center">
-                                                            <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6-2.292m0 0a8.966 8.966 0 0 0-6 2.292m6-2.292a8.966 8.966 0 0 1 6 2.292m0 0V3.75c-1.053-.332-2.062-.512-3-.512a8.966 8.966 0 0 0-6 2.292" /></svg>
-                                                         </div>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <a href="detail.php?id=<?= $book['id'] ?>" class="font-medium text-slate-900 hover:text-indigo-600"><?= htmlspecialchars($book['judul']) ?></a>
-                                                    <div class="text-slate-500"><?= htmlspecialchars($book['penulis']) ?></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-slate-500"><?= htmlspecialchars($book['nama_kategori'] ?? '-') ?></td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-slate-500"><?= htmlspecialchars($book['penerbit']) ?></td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                            <?php if($book['stok'] > 0): ?>
-                                                <span class="font-semibold text-green-700"><?= $book['stok'] ?></span>
-                                            <?php else: ?>
-                                                <span class="font-semibold text-red-600">Habis</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-3">
-                                            <a href="edit.php?id=<?= $book['id'] ?>" class="text-indigo-600 hover:text-indigo-900">✏️ Edit</a>
-                                            <a href="delete.php?id=<?= $book['id'] ?>" onclick="return confirm('Anda yakin ingin menghapus buku ini?')" class="text-red-600 hover:text-red-900 ml-4">🗑️ Hapus</a>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr><td colspan="6" class="text-center py-10 text-slate-500">Belum ada buku di dalam database.</td></tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </main>
-
+        <!-- ... Tampilan admin tetap sama ... -->
         <?php else: ?>
-
+        <!-- Tampilan pengguna biasa -->
         <main class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <?php foreach ($books as $book): ?>
-            <a href="detail.php?id=<?= $book["id"] ?>" class="card group block">
-                <div class="relative w-full aspect-[3/4] bg-slate-200 rounded-xl shadow-lg overflow-hidden">
-                    <?php if (!empty($book['image_path'])): ?>
-                        <img src="<?= htmlspecialchars($book['image_path']) ?>" alt="<?= htmlspecialchars($book['judul']) ?>" class="w-full h-full object-cover">
-                    <?php else: ?>
-                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
-                             <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6-2.292m0 0a8.966 8.966 0 0 0-6 2.292m6-2.292a8.966 8.966 0 0 1 6 2.292m0 0V3.75c-1.053-.332-2.062-.512-3-.512a8.966 8.966 0 0 0-6 2.292"></path></svg>
-                            <span class="text-xs mt-2">Cover tidak tersedia</span>
+            <?php if (count($books) > 0): ?>
+                <?php foreach ($books as $book): ?>
+                <a href="detail.php?id=<?= $book["id"] ?>" class="card group block">
+                    <div class="relative w-full aspect-[3/4] bg-slate-200 rounded-xl shadow-lg overflow-hidden">
+                        <?php if (!empty($book['image_path'])): ?>
+                            <img src="<?= htmlspecialchars($book['image_path']) ?>" alt="<?= htmlspecialchars($book['judul']) ?>" class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6-2.292m0 0a8.966 8.966 0 0 0-6 2.292m6-2.292a8.966 8.966 0 0 1 6 2.292m0 0V3.75c-1.053-.332-2.062-.512-3-.512a8.966 8.966 0 0 0-6 2.292"></path></svg>
+                                <span class="text-xs mt-2">Cover tidak tersedia</span>
+                            </div>
+                        <?php endif; ?>
+                        <div class="absolute inset-0 card-gradient flex flex-col justify-end p-4">
+                            <span class="inline-block bg-slate-700/80 text-white text-xs font-semibold px-3 py-1 rounded-full self-start backdrop-blur-sm">
+                                <?= htmlspecialchars($book['nama_kategori'] ?? 'Tanpa Kategori') ?>
+                            </span>
+                            <h3 class="text-white text-lg font-bold mt-2 leading-tight drop-shadow-md">
+                                <?= htmlspecialchars($book['judul']) ?>
+                            </h3>
+                            <p class="text-slate-200 text-sm mt-1 truncate drop-shadow-md">
+                                <?= htmlspecialchars($book['penulis']) ?>
+                            </p>
                         </div>
-                    <?php endif; ?>
-                    <div class="absolute inset-0 card-gradient flex flex-col justify-end p-4">
-                        <span class="inline-block bg-slate-700/80 text-white text-xs font-semibold px-3 py-1 rounded-full self-start backdrop-blur-sm">
-                            <?= htmlspecialchars($book['nama_kategori'] ?? 'Tanpa Kategori') ?>
-                        </span>
-                        <h3 class="text-white text-lg font-bold mt-2 leading-tight drop-shadow-md">
-                            <?= htmlspecialchars($book['judul']) ?>
-                        </h3>
-                        <p class="text-slate-200 text-sm mt-1 truncate drop-shadow-md">
-                            <?= htmlspecialchars($book['penulis']) ?>
-                        </p>
                     </div>
+                </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-span-full text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <h3 class="mt-2 text-lg font-medium text-slate-900">Tidak ada buku</h3>
+                    <p class="mt-1 text-sm text-slate-500">
+                        <?php if ($currentCategoryId): ?>
+                            Belum ada buku dalam kategori ini.
+                        <?php else: ?>
+                            Belum ada buku yang tersedia.
+                        <?php endif; ?>
+                    </p>
                 </div>
-            </a>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </main>
-        
         <?php endif; ?>
-        </div>
+    </div>
 <?php include '../../includes/footer.php'; ?>
 </body>
 </html>

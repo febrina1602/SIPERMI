@@ -184,7 +184,7 @@ function getBooksByCategory($category_id) {
         document.body.style.overflow = 'hidden';
         
         // Set link "Lihat Semua"
-        document.getElementById('allBooksLink').href = 'buku.php?kategori=' + categoryId;
+        document.getElementById('allBooksLink').href = '/SIPERMI/views/buku/collection.php?kategori=' + categoryId;
         
         // Load books for this category
         $.ajax({
