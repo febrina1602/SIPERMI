@@ -51,93 +51,110 @@ if (isset($_GET['resequence'])) {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Added spacing between table and footer */
+        .main-content {
+            padding-bottom: 5rem; /* Increased bottom padding */
+        }
+        
+        /* Footer styling */
+        .footer-container {
+            padding-top: 2.5rem;
+            padding-bottom: 2.5rem;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-white min-h-screen flex flex-col">
 
-<div class="container mx-auto px-4 py-10 flex-grow">
-  <h1 class="text-4xl font-bold mb-10 text-center drop-shadow flex items-center justify-center gap-3">
-    <img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Ikon Buku" class="w-12 h-12">
-    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500">
-      Manajemen Kategori Buku
-    </span>
+<div class="container mx-auto px-1 py-1 sm:py-10 flex-grow">
+  <h1 class="text-3xl sm:text-4xl font-bold text-center">
+    <div class="inline-flex flex-col sm:flex-row items-center justify-center gap-1 px-1 py-1 sm:py-1">
+      <img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Ikon Buku" 
+           class="w-10 h-10 sm:w-12 sm:h-12 transition-transform duration-300 hover:scale-110">
+      <span 
+        class="text-transparent bg-clip-text bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6]"
+        style="line-height: 1.2; padding-bottom: 0.15em; display: inline-block;"
+      >
+        Manajemen Kategori Buku
+      </span>
+    </div>
   </h1>
 </div>
 
+<div class="main-content"> <!-- Added wrapper for spacing -->
+  <div class="max-w-5xl mx-auto mb-16"> <!-- Added bottom margin -->
+    <div class="flex justify-between mb-6">
+      <button onclick="openAddModal()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
+        <i class="fas fa-plus-circle"></i> Tambah Kategori
+      </button>
+      
+      <button onclick="resequenceIDs()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
+        <i class="fas fa-sync-alt"></i> Reset Urutan ID
+      </button>
+    </div>
 
-    <div class="max-w-5xl mx-auto">
-      <div class="flex justify-between mb-6">
-        <button onclick="openAddModal()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
-          <i class="fas fa-plus-circle"></i> Tambah Kategori
-        </button>
-        
-        <button onclick="resequenceIDs()" class="bg-gradient-to-r from-[#055a8c] via-[#0978B6] to-[#66b3e6] hover:from-[#044c79] hover:to-[#55a8db] text-white px-5 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-sm flex items-center gap-2">
-          <i class="fas fa-sync-alt"></i> Reset Urutan ID
-        </button>
-      </div>
-
-      <div class="bg-white shadow-xl rounded-xl p-6">
-        <table class="w-full text-sm md:text-base text-gray-700">
-          <thead>
-            <tr class="bg-blue-100 text-blue-800 border-b">
-              <th class="py-3 px-4 text-left">ID</th>
-              <th class="py-3 px-4 text-left">Cover</th>
-              <th class="py-3 px-4 text-left">Nama Kategori</th>
-              <th class="py-3 px-4 text-left">Jumlah Buku</th>
-              <th class="py-3 px-4 text-left">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($categories as $category): 
-                // Escape khusus untuk JavaScript
-                $escaped_nama = htmlspecialchars(addslashes($category['nama_kategori']));
-                $escaped_cover = $category['cover_path'] ? htmlspecialchars(addslashes($category['cover_path'])) : '';
-            ?>
-            <tr class="border-b hover:bg-blue-50 transition">
-              <td class="py-3 px-4 font-semibold"><?= $category['id'] ?></td>
-              <!-- Di bagian tabel -->
-              <td class="py-3 px-4">
-                <?php if (!empty($category['cover_path'])): ?>
-                  <div class="w-[80px] h-[120px] overflow-hidden rounded shadow">
-                    <img src="<?= htmlspecialchars($category['cover_path']) ?>" alt="Cover Kategori" class="w-full h-full object-cover">
-                  </div>
-                <?php else: ?>
-                  <div class="bg-gray-200 border-2 border-dashed rounded-xl w-[80px] h-[120px] flex items-center justify-center text-gray-400">
-                    <i class="fas fa-image"></i>
-                  </div>
-                <?php endif; ?>
-              </td>
-              <td class="py-3 px-4"><?= htmlspecialchars($category['nama_kategori']) ?></td>
-              <td class="py-3 px-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
-                  <i class="fas fa-book mr-2"></i> <?= $category['jumlah_buku'] ?>
-                </span>
-              </td>
-              <td class="py-3 px-4">
-                <div class="flex gap-2">
-                  <button onclick="openEditModal(<?= $category['id'] ?>, '<?= $escaped_nama ?>', <?= $category['jumlah_buku'] ?>, '<?= $escaped_cover ?>')" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow-sm">
-                    <i class="fas fa-edit mr-1"></i> Edit
-                  </button>
-                  <button onclick="confirmDelete(<?= $category['id'] ?>)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow-sm">
-                    <i class="fas fa-trash-alt mr-1"></i> Hapus
-                  </button>
+    <div class="bg-white shadow-xl rounded-xl p-6">
+      <table class="w-full text-sm md:text-base text-gray-700">
+        <thead>
+          <tr class="bg-blue-100 text-blue-800 border-b">
+            <th class="py-3 px-4 text-left">ID</th>
+            <th class="py-3 px-4 text-left">Cover</th>
+            <th class="py-3 px-4 text-left">Nama Kategori</th>
+            <th class="py-3 px-4 text-left">Jumlah Buku</th>
+            <th class="py-3 px-4 text-left">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($categories as $category): 
+              // Escape khusus untuk JavaScript
+              $escaped_nama = htmlspecialchars(addslashes($category['nama_kategori']));
+              $escaped_cover = $category['cover_path'] ? htmlspecialchars(addslashes($category['cover_path'])) : '';
+          ?>
+          <tr class="border-b hover:bg-blue-50 transition">
+            <td class="py-3 px-4 font-semibold"><?= $category['id'] ?></td>
+            <!-- Di bagian tabel -->
+            <td class="py-3 px-4">
+              <?php if (!empty($category['cover_path'])): ?>
+                <div class="w-[80px] h-[120px] overflow-hidden rounded shadow">
+                  <img src="<?= htmlspecialchars($category['cover_path']) ?>" alt="Cover Kategori" class="w-full h-full object-cover">
                 </div>
+              <?php else: ?>
+                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-[80px] h-[120px] flex items-center justify-center text-gray-400">
+                  <i class="fas fa-image"></i>
+                </div>
+              <?php endif; ?>
+            </td>
+            <td class="py-3 px-4"><?= htmlspecialchars($category['nama_kategori']) ?></td>
+            <td class="py-3 px-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
+                <i class="fas fa-book mr-2"></i> <?= $category['jumlah_buku'] ?>
+              </span>
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex gap-2">
+                <button onclick="openEditModal(<?= $category['id'] ?>, '<?= $escaped_nama ?>', <?= $category['jumlah_buku'] ?>, '<?= $escaped_cover ?>')" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow-sm">
+                  <i class="fas fa-edit mr-1"></i> Edit
+                </button>
+                <button onclick="confirmDelete(<?= $category['id'] ?>)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow-sm">
+                  <i class="fas fa-trash-alt mr-1"></i> Hapus
+                </button>
+              </div>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+
+          <?php if (empty($categories)): ?>
+            <tr>
+              <td colspan="5" class="text-center py-6 text-gray-500 italic">
+                <i class="fas fa-book-open mr-2"></i> Belum ada kategori.
               </td>
             </tr>
-            <?php endforeach; ?>
-
-            <?php if (empty($categories)): ?>
-              <tr>
-                <td colspan="5" class="text-center py-6 text-gray-500 italic">
-                  <i class="fas fa-book-open mr-2"></i> Belum ada kategori.
-                </td>
-              </tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
+          <?php endif; ?>
+        </tbody>
+      </table>
     </div>
   </div>
+</div> <!-- End of main-content wrapper -->
 
   <!-- Modal Tambah/Edit -->
   <div id="kategoriModal" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50 transition">
@@ -195,9 +212,9 @@ if (isset($_GET['resequence'])) {
     </div>
   </div>
 
-  
+  <div class="footer-container mt-auto"> <!-- Added padding for footer -->
     <?php include '../../../includes/footer.php'; ?>
-  
+  </div>
 
   <script>
     function openAddModal() {
