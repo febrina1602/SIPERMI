@@ -168,13 +168,17 @@ if (isset($_GET['resequence'])) {
           <input type="file" name="cover" id="coverInput" accept="image/*" class="w-full text-sm">
         </div>
         
-        <div class="mb-6">
+        <!-- Informasi jumlah buku (hanya untuk mode edit) -->
+        <div id="jumlahBukuInfo" class="mb-4 hidden">
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            <i class="fas fa-book mr-2"></i>Jumlah Buku Tersedia
+            <i class="fas fa-book mr-2"></i>Jumlah Buku dalam Kategori
           </label>
-          <input type="number" name="jumlah_buku" id="jumlahBuku" min="0" required 
-                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                 placeholder="Jumlah buku dalam kategori">
+          <div class="px-4 py-2 bg-gray-100 rounded-md font-semibold text-blue-700">
+            <span id="jumlahBukuValue">0</span> buku
+          </div>
+          <p class="text-xs text-gray-500 mt-1">
+            *Jumlah buku akan otomatis diperbarui sesuai buku dalam kategori
+          </p>
         </div>
         
         <div class="flex justify-end mt-6 gap-3">
@@ -199,10 +203,13 @@ if (isset($_GET['resequence'])) {
     function openAddModal() {
       document.getElementById('kategoriId').value = '';
       document.getElementById('namaKategori').value = '';
-      document.getElementById('jumlahBuku').value = '0';
       document.getElementById('coverPreview').innerHTML = '';
       document.getElementById('existingCover').value = '';
       document.getElementById('titleText').innerText = 'Tambah Kategori';
+      
+      // Sembunyikan info jumlah buku
+      document.getElementById('jumlahBukuInfo').classList.add('hidden');
+      
       document.getElementById('kategoriModal').classList.remove('hidden');
       document.getElementById('kategoriModal').classList.add('flex');
     }
@@ -210,9 +217,12 @@ if (isset($_GET['resequence'])) {
     function openEditModal(id, nama, jumlah, cover) {
       document.getElementById('kategoriId').value = id;
       document.getElementById('namaKategori').value = nama;
-      document.getElementById('jumlahBuku').value = jumlah;
       document.getElementById('existingCover').value = cover;
       document.getElementById('titleText').innerText = 'Edit Kategori';
+      
+      // Tampilkan jumlah buku sebagai informasi
+      document.getElementById('jumlahBukuValue').textContent = jumlah;
+      document.getElementById('jumlahBukuInfo').classList.remove('hidden');
       
       // Tampilkan preview cover jika ada
       const preview = document.getElementById('coverPreview');

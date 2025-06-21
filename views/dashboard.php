@@ -3,7 +3,7 @@ session_start();
 include '../includes/connection_db.php';
 
 if (!isset($_SESSION['user'])) {
-  header("Location: ../login.php");
+  header("Location: /SIPERMI/public/auth/login.php");
   exit();
 }
 
