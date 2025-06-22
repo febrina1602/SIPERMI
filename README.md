@@ -1,10 +1,10 @@
 # SIPERMI - Sistem Informasi Perpustakaan Mini
 ## KELOMPOK 2
 Nama Anggota:
-1. [Febrina Aulia Azahra 2317051100] (https://github.com/febrina1602)
-2. [Cahya Nerissa 2317051032] (https://github.com/chynrssa)
-3. [Indah Febriana Della 2317051066] (https://github.com/Febrianadella)
-4. [Kartika Adinda Kusuma Dewi 2317051070] (https://github.com/kartikaaadn)
+1. [Febrina Aulia Azahra 2317051100](https://github.com/febrina1602)
+2. [Cahya Nerissa 2317051032](https://github.com/chynrssa)
+3. [Indah Febriana Della 2317051066](https://github.com/Febrianadella)
+4. [Kartika Adinda Kusuma Dewi 2317051070](https://github.com/kartikaaadn)
    
 ## 📚 Deskripsi Proyek
 **SIPERMI** adalah aplikasi berbasis web yang dirancang untuk membantu pengelolaan perpustakaan secara digital. Sistem ini memungkinkan **admin** untuk mengelola koleksi buku, kategori, dan peminjaman, sementara **anggota (user)** dapat melihat daftar buku, memberikan ulasan, serta meminjam buku. Aplikasi ini bertujuan mempermudah akses informasi buku dan pengelolaan inventaris perpustakaan secara lebih efisien, transparan, dan terstruktur.
