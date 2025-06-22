@@ -10,22 +10,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kembalikan'])) {
   $id_peminjaman = intval($_POST['id_peminjaman']);
   $tanggal_kembali = date('Y-m-d');
 
-  $update = mysqli_query($conn, 
+  // Ambil id_buku dari peminjaman
+  $getBuku = mysqli_query($conn, "SELECT id_buku FROM peminjaman WHERE id = $id_peminjaman");
+  $dataBuku = mysqli_fetch_assoc($getBuku);
+  $id_buku = $dataBuku['id_buku'];
+
+  // Update status peminjaman menjadi dikembalikan
+  mysqli_query($conn, 
     "UPDATE peminjaman 
      SET status = 'dikembalikan', tanggal_pengembalian = '$tanggal_kembali' 
      WHERE id = $id_peminjaman");
 
+  // Tambahkan kembali stok buku
+  mysqli_query($conn, 
+    "UPDATE buku 
+     SET stok = stok + 1 
+     WHERE id = $id_buku");
+
   header("Location: " . $_SERVER['PHP_SELF']);
   exit();
 }
 
-// Hapus data pengembalian (admin only)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus']) && $is_admin) {
-  $id_peminjaman = intval($_POST['id_peminjaman']);
-  $hapus = mysqli_query($conn, "DELETE FROM peminjaman WHERE id = $id_peminjaman");
-  header("Location: " . $_SERVER['PHP_SELF']);
-  exit();
-}
 
 // Ambil data
 if ($is_admin) {
