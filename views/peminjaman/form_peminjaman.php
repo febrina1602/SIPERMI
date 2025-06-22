@@ -65,9 +65,9 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
           </div>
 
           <div>
-            <label for="tanggal_pengembalian" class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Kembali</label>
-            <input type="date" name="tanggal_pengembalian" id="tanggal_pengembalian" required
-                   class="w-full p-3 rounded-lg border border-gray-300 shadow-sm">
+            <label for="tanggal_pengembalian" class="block text-sm font-semibold text-gray-700 mb-1">Maks. Tanggal Kembali</label>
+            <input type="date" name="tanggal_pengembalian" id="tanggal_pengembalian" readonly
+                   class="w-full p-3 rounded-lg border border-gray-300 shadow-sm bg-gray-100">
           </div>
         </div>
 
@@ -83,5 +83,25 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
   <!-- Panggil FOOTER -->
   <?php include '../../includes/footer.php'; ?>
 
+  <script>
+    const tanggalPinjamInput = document.getElementById('tanggal_peminjaman');
+    const tanggalKembaliInput = document.getElementById('tanggal_pengembalian');
+
+    tanggalPinjamInput.addEventListener('change', function () {
+      const tglPinjam = new Date(this.value);
+      if (isNaN(tglPinjam)) return;
+
+      // Tambah 7 hari
+      tglPinjam.setDate(tglPinjam.getDate() + 7);
+
+      // Format YYYY-MM-DD
+      const yyyy = tglPinjam.getFullYear();
+      const mm = String(tglPinjam.getMonth() + 1).padStart(2, '0');
+      const dd = String(tglPinjam.getDate()).padStart(2, '0');
+      const hasil = `${yyyy}-${mm}-${dd}`;
+
+      tanggalKembaliInput.value = hasil;
+    });
+  </script>
 </body>
 </html>
