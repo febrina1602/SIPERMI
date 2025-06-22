@@ -13,7 +13,7 @@
 - Password disimpan dalam bentuk **hash** untuk keamanan
 - Sistem otorisasi berdasarkan role pengguna
 
-### 📚 Manajemen Buku (Admin)
+### 📚 Manajemen Buku
 - Tambah, edit, hapus data buku
 - Mengelola gambar cover dan deskripsi buku
 - Stok buku otomatis diperbarui saat peminjaman terjadi
